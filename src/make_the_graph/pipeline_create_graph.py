@@ -1,6 +1,6 @@
 # %% [markdown]
 # ## Preprocessing
-
+# gcloud compute scp amosd@instance-3:/home/amosd/heero_graph_final.pkl.gz heero_graph_final.pkl
 # %% [markdown]
 # ### Read
 import pickle
@@ -66,7 +66,7 @@ def extract_pages(s):
 
 df['authors_parsed'] = df['authors_parsed'].apply(lambda x: [" ".join(i).strip() for i in (eval(x) if isinstance(x, str) else x)]) # authors to name, first name and list
 df['versions'] = df['versions'].apply(lambda x: eval(x)[0]["created"] if isinstance(x, str) else x) # first version / created
-df['timestamp'] = df['versions'].apply(lambda x: x[0]['created'] if isinstance(x, list) and len(x) > 0 else None)
+df['data'] = df['versions'].apply(lambda x: x[0]['created'] if isinstance(x, list) and len(x) > 0 else None)
 df['timestamp'] = pd.to_datetime(df['timestamp'], format="%a, %d %b %Y %H:%M:%S %Z", errors='coerce')
 df["categories"] = df["categories"].apply(lambda x: x.split(" ")) # sdeperate categories by comma
 df.drop(columns=["submitter", "versions", "update_date", "authors"], inplace=True)
