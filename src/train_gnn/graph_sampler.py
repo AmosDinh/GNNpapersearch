@@ -1,4 +1,3 @@
-# COMMAND ----------
 # Sampling
 # 1. Sample using HGT Sampler as outlined in the paper, using pyg implementations
 # 2. The sampling is adapted to link prediction, by first sampling random supervision edges of which the nodes create the supervision nodes
@@ -44,14 +43,17 @@ def add_reverse_edge_original_attributes_and_label_inplace(original_edge, revers
                 
     return reverse_edge
 
+import pickle 
+
 def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=50, remove_text_attr=True):
     if filename is None:
-        filename = 'HeteroData_Learnings_normalized_triangles_withadditionaldata_v1.pt'
+        filename = 'hetero_graph_final.pkl'
     size = os.path.getsize(filename)
     print('size of dataset on disk: ', size/1e9, 'gb')
 
     if os.path.exists(filename):
-        data = HeteroData.from_dict(torch.load(filename))
+        #data = HeteroData.from_dict(torch.load(filename))
+        data = pickle.load(open(filename, 'rb'))
         print('loading saved heterodata object')
 
 
@@ -84,7 +86,6 @@ def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=5
     
    
     if filter_top_k:
-        print('for skill job edges keep top k edges per job, k is ',top_k)
         e = ('skills', 'job_skill', 'jobs')
         rev_e = (e[2],'rev_'+e[1],e[0])
         cache_dir = 'cache'
@@ -124,7 +125,7 @@ def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=5
         is_undirected=True,
         edge_types=edge_types,
         rev_edge_types=rev_edge_types,
-        num_val=0.02,
+        num_val=0.05,
         num_test=0.05,
         add_negative_train_samples=False, # only adds neg samples for val and test, neg train are added by LinkNeighborLoader. This means for each train batch, negs. are different, for val and train they stay the same
         neg_sampling_ratio=1.0,
@@ -449,7 +450,6 @@ def equal_edgeweight_hgt_sampler(data, batch_size, is_training, sampling_mode, n
             
         yield same_nodetype, target_edge_type, minibatch
 
-# COMMAND ----------
 if __name__ == '__main__':
     import datetime
     import time
