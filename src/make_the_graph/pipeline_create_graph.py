@@ -654,7 +654,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     edge_index_list_has_category = []
     list_of_category_ids = []
-    list_of_paper_ids = []
+    list_of_cat_paper_ids = []
 
     # Iteriere durch die Zeilen des DataFrames
     for i in range(len(df)):
@@ -671,9 +671,9 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
                 category_id += 1
 
             list_of_category_ids.append(category_id -1)
-            list_of_paper_ids.append(paper_id -1)
+            list_of_cat_paper_ids.append(paper_id -1)
 
-    edge_index_list_has_category.append(list_of_paper_ids)
+    edge_index_list_has_category.append(list_of_cat_paper_ids)
     edge_index_list_has_category.append(list_of_category_ids)
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
@@ -746,7 +746,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     word_id = 0
 
     edge_index_list_has_word = []
-    list_of_paper_ids = []
+    list_of_word_paper_ids = []
     list_of_word_ids = []
 
     # Iteriere durch die Zeilen des DataFrames
@@ -763,10 +763,10 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
                 id_to_word[word_id] = word
                 word_id += 1
 
-            list_of_paper_ids.append(paper_id -1)
+            list_of_word_paper_ids.append(paper_id -1)
             list_of_word_ids.append(word_id -1)
 
-    edge_index_list_has_word.append(list_of_paper_ids)
+    edge_index_list_has_word.append(list_of_word_paper_ids)
     edge_index_list_has_word.append(list_of_word_ids)
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
@@ -833,7 +833,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     titleword_id = 0
 
     edge_index_list_has_titleword = []
-    list_of_paper_ids = []
+    list_of_title_paper_ids = []
     list_of_titleword_ids = []
 
     # Iteriere durch die Zeilen des DataFrames
@@ -850,10 +850,10 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
                 id_to_titleword[titleword_id] = titleword
                 titleword_id += 1
 
-            list_of_paper_ids.append(paper_id -1)
+            list_of_title_paper_ids.append(paper_id -1)
             list_of_titleword_ids.append(titleword_id -1)
 
-    edge_index_list_has_titleword.append(list_of_paper_ids)
+    edge_index_list_has_titleword.append(list_of_title_paper_ids)
     edge_index_list_has_titleword.append(list_of_titleword_ids)
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
@@ -922,7 +922,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     journal_id = 0
 
     edge_index_list_in_journal = []
-    list_of_paper_ids = []
+    list_of_journal_paper_ids = []
     list_of_journal_ids = []
 
     # Iteriere durch die Zeilen des DataFrames
@@ -938,10 +938,10 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
             id_to_journal[journal_id] = journal
             journal_id += 1
 
-        list_of_paper_ids.append(paper_id -1)
+        list_of_journal_paper_ids.append(paper_id -1)
         list_of_journal_ids.append(journal_id -1)
 
-    edge_index_list_in_journal.append(list_of_paper_ids)
+    edge_index_list_in_journal.append(list_of_journal_paper_ids)
     edge_index_list_in_journal.append(list_of_journal_ids)
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
