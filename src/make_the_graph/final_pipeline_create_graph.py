@@ -258,6 +258,10 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     edge_index_list_written_by.append(list_of_paper_ids)
     edge_index_list_written_by.append(list_of_authors_ids)
 
+    data['paper'].title = [id_to_paper[i] for i in range(len(id_to_paper))]
+
+    data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
+
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_written_by = torch.tensor(edge_index_list_written_by, dtype=torch.long)
 
@@ -306,6 +310,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     edge_index_list_has_category.append(list_of_cat_paper_ids)
     edge_index_list_has_category.append(list_of_category_ids)
 
+    data['category'].name = [id_to_category[i] for i in range(len(id_to_category))]
+
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_has_category = torch.tensor(edge_index_list_has_category, dtype=torch.long)
 
@@ -313,14 +319,66 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     data['paper', 'has_category', 'category'].edge_index = edge_index_tensor_has_category
 
     # %%
-    edge_index_tensor_has_category
-
-    # %%
     print(list_of_paper_ids[-1:])
     print(torch.max(edge_index_tensor_has_category[0,:]))
 
     print(list_of_category_ids[-1:])
     print(torch.max(edge_index_tensor_has_category[1,:]))
+
+    # %%
+    edge_index_tensor_has_category
+
+    #%%
+    id_to_paper = {}
+    id_to_word = {}
+
+    # Eindeutige IDs für Paper und Wörter erstellen
+    paper_id = 0
+    word_id = 0
+
+    edge_index_list_has_word = []
+    list_of_word_paper_ids = []
+    list_of_word_ids = []
+
+    # Iteriere durch die Zeilen des DataFrames
+    for i in range(len(df)):
+        # Holen der ID des Papers und der Wörter aus der aktuellen Zeile
+        paper_title = df['title'][i]
+        if paper_title not in id_to_paper.values():
+            id_to_paper[paper_id] = paper_title
+            paper_id += 1
+
+        words = filtered_all_words[i]
+        for word in words:
+            if word not in id_to_word.values():
+                id_to_word[word_id] = word
+                word_id += 1
+
+            list_of_word_paper_ids.append(paper_id -1)
+            list_of_word_ids.append(word_id -1)
+
+    edge_index_list_has_word.append(list_of_word_paper_ids)
+    edge_index_list_has_word.append(list_of_word_ids)
+
+    data['word'].name = [id_to_word[i] for i in range(len(id_to_word))]
+
+    # Konvertiere die Liste in ein torch.Tensor-Objekt
+    edge_index_tensor_has_word = torch.tensor(edge_index_list_has_word, dtype=torch.long)
+
+    # Weise die Edge-Indizes dem HeteroData-Objekt zu
+    data['paper', 'has_word', 'word'].edge_index = edge_index_tensor_has_word
+
+    #%%
+    edge_index_tensor_has_word
+
+    #%%
+    print(list_of_paper_ids[-1:])
+    print(torch.max(edge_index_tensor_has_word[0,:]))
+
+    print(list_of_word_ids[-1:])
+    print(torch.max(edge_index_tensor_has_word[1,:]))
+
+    
 
     # %%
     id_to_paper = {}
@@ -400,6 +458,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     edge_index_list_in_journal.append(list_of_journal_paper_ids)
     edge_index_list_in_journal.append(list_of_journal_ids)
+
+    data['journal'].name = [id_to_journal[i] for i in range(len(id_to_journal))]
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_in_journal = torch.tensor(edge_index_list_in_journal, dtype=torch.long)
