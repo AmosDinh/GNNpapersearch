@@ -588,6 +588,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     edge_index_list_written_by.append(list_of_paper_ids)
     edge_index_list_written_by.append(list_of_authors_ids)
 
+    data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
+
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_written_by = torch.tensor(edge_index_list_written_by, dtype=torch.long)
 
@@ -675,6 +677,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     edge_index_list_has_category.append(list_of_cat_paper_ids)
     edge_index_list_has_category.append(list_of_category_ids)
+
+    data['category'].name = [id_to_category[i] for i in range(len(id_to_category))]
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_has_category = torch.tensor(edge_index_list_has_category, dtype=torch.long)
@@ -768,6 +772,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     edge_index_list_has_word.append(list_of_word_paper_ids)
     edge_index_list_has_word.append(list_of_word_ids)
+
+    data['word'].name = [id_to_word[i] for i in range(len(id_to_word))]
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_has_word = torch.tensor(edge_index_list_has_word, dtype=torch.long)
@@ -943,6 +949,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     edge_index_list_in_journal.append(list_of_journal_paper_ids)
     edge_index_list_in_journal.append(list_of_journal_ids)
+
+    data['journal'].name = [id_to_journal[i] for i in range(len(id_to_journal))]
 
     # Konvertiere die Liste in ein torch.Tensor-Objekt
     edge_index_tensor_in_journal = torch.tensor(edge_index_list_in_journal, dtype=torch.long)
