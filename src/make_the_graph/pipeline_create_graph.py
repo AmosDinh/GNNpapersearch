@@ -587,6 +587,8 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     edge_index_list_written_by.append(list_of_paper_ids)
     edge_index_list_written_by.append(list_of_authors_ids)
+    
+    data['paper'].title = [id_to_paper[i] for i in range(len(id_to_paper))]
 
     data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
 
