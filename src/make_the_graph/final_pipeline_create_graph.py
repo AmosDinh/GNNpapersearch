@@ -43,7 +43,7 @@ def read_first_n_lines(file_path, n=10000):
 file_path = 'data/arxiv-metadata-oai-snapshot.json'
 
 # DataFrame erstellen
-df = read_first_n_lines(file_path, 1000)
+df = read_first_n_lines(file_path, 100000000000)
 
 # %%
 df.dtypes
@@ -185,7 +185,7 @@ if not os.path.exists("hetero_graph_temp.pt"):
     comment_list = df_short['comments'].tolist()
 
     journal_list = df_short['journal-ref'].tolist()
-    journal_list_set = set(journal_list)
+    # journal_list_set = set(journal_list)
 
     words_in_title_list = df_short['title'].tolist()
 
@@ -302,11 +302,11 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     journal_to_id = {journal:i for i, journal in enumerate(all_unique_journals)}
     id_to_journal = {i:journal for i, journal in enumerate(all_unique_journals)}
-
+    
     data['journal'].name = [id_to_journal[i] for i in range(len(id_to_journal))]
     data['journal'].num_nodes = len(data['journal'].name)
     print('journal in paper')
-    journal_in_paper = [journal_to_id[journal] if journal in journal_to_id else None for journal in all_unique_journals]
+    journal_in_paper = [journal_to_id[journal] if journal in journal_to_id else None for journal in journal_list]
 
     edge5 = [[paper_id, journal_id] for paper_id, journal_id in zip(idtitle, journal_in_paper)]
     edge5 = torch.tensor(edge5).T
