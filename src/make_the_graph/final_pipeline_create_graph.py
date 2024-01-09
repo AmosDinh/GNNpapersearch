@@ -25,6 +25,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 import pickle
 
+from ordered_set import OrderedSet
+
 # %%
 def read_first_n_lines(file_path, n=10000):
     data = []
@@ -89,7 +91,7 @@ nlp = spacy.load("en_core_web_sm")
 def lemma(docs=df.abstract):
     pip = nlp.pipe(docs, batch_size=32, n_process=-1, disable=["parser", "ner"])
     return [
-        [tok.lemma_ for tok in doc if not tok.is_punct and not tok.is_space]
+        [tok.lemma_.lower() for tok in doc if not tok.is_punct and not tok.is_space]
         for doc in tqdm(pip, total=len(docs))
     ]
 
@@ -160,10 +162,10 @@ if not os.path.exists("hetero_graph_temp.pt"):
     # ### Delete duplicates
 
     # %%
-    categories_list = set(categories_values)
-    authors_list = set(authors_values)
-    title_words_list = set(title_values)
-    words_list = set(words_values)
+    categories_list = OrderedSet(categories_values)
+    authors_list = OrderedSet(authors_values)
+    title_words_list = OrderedSet(title_values)
+    words_list = OrderedSet(words_values)
 
     # %% [markdown]
     # ### Liste mit allen Attributen erstellen
@@ -178,6 +180,7 @@ if not os.path.exists("hetero_graph_temp.pt"):
     comment_list = df_short['comments'].tolist()
 
     journal_list = df_short['journal-ref'].tolist()
+    journal_list_set = set(journal_list)
 
     words_in_title_list = df_short['title'].tolist()
 
@@ -195,23 +198,23 @@ if not os.path.exists("hetero_graph_temp.pt"):
     data['paper'].num_nodes = len(df_short)
     data['paper'].license = licenses_list
     data['paper'].doi = doi_list
-    data['paper'].title = title_list
+    # data['paper'].title = title_list
     data['paper'].pages = pages_list
     data['paper'].journal = journal_list
     data['paper'].date = date_list
     data['paper'].id = id_list
 
     data['author'].num_nodes = len(authors_list)
-    data['author'].name = authors_list
+    # data['author'].name = authors_list
 
     data['category'].num_nodes = len(categories_list)
-    data['category'].name = categories_list
+    # data['category'].name = categories_list
 
-    data['journal'].num_nodes = len(df_short)
-    data['journal'].name = journal_list
+    data['journal'].num_nodes = len(journal_list_set)
+    # data['journal'].name = journal_list
 
     data['word'].num_nodes = len(words_list)
-    data['word'].name = words_list
+    # data['word'].name = words_list
     torch.save(data, "hetero_graph_temp.pt")
 
 else:
@@ -225,257 +228,83 @@ print('heterograph')
     # %%
 if not os.path.exists("hetero_graph_temp3.pkl"):
 
-    
-    # Initialisierung der Dictionaries für das Mapping
-    id_to_paper = {}
-    id_to_author = {}
+    # edge paper written by author
+    unique_titles = df_short['title'].unique()
+    title_to_id = {title:i for i, title in enumerate(unique_titles)}
+    id_to_paper = {i:title for i, title in enumerate(unique_titles)}
 
-    # Eindeutige IDs für Paper und Autoren erstellen
-    paper_id = 0
-    author_id = 0
 
-    edge_index_list_written_by = []
-    list_of_authors_ids = []
-    list_of_paper_ids = []
+    idtitle = df_short['title'].apply(lambda x: title_to_id[x])
 
-    # Iteriere durch die Zeilen des DataFrames
-    for i in range(len(df_short)):
-        # Holen der ID des Papers und des Autors aus der aktuellen Zeile
-        paper_title = df_short['title'][i]
-        if paper_title not in id_to_paper.values():
-            id_to_paper[paper_id] = paper_title
-            paper_id += 1
 
-        authors_parsed = df_short['authors_parsed'][i]
-        for author in authors_parsed:
-            if author not in id_to_author.values():
-                id_to_author[author_id] = author
-                author_id += 1
-
-            list_of_authors_ids.append(author_id -1)
-            list_of_paper_ids.append(paper_id -1)
-
-    edge_index_list_written_by.append(list_of_paper_ids)
-    edge_index_list_written_by.append(list_of_authors_ids)
+    author_to_id = {author:i for i, author in enumerate(authors_list)}
+    id_to_author = {i:author for i, author in enumerate(authors_list)}
 
     data['paper'].title = [id_to_paper[i] for i in range(len(id_to_paper))]
-
     data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
 
-    # Konvertiere die Liste in ein torch.Tensor-Objekt
-    edge_index_tensor_written_by = torch.tensor(edge_index_list_written_by, dtype=torch.long)
+    authors_in_paper = [[author_to_id[author] for author in authors] for authors in all_authors]
 
-    # Weise die Edge-Indizes dem HeteroData-Objekt zu
-    data['paper', 'written_by', 'author'].edge_index = edge_index_tensor_written_by
+    edge1 = [[paper_id, author_id] for paper_id, author_list in zip(idtitle, authors_in_paper) for author_id in author_list]
+    edge1 = torch.tensor(edge1).T
 
-    # %%
-    edge_index_tensor_written_by
+    data['paper', 'written_by', 'author'].edge_index = edge1
 
-    # %%
-    print(list_of_paper_ids[-1:])
-    print(torch.max(edge_index_tensor_written_by[0,:]))
-
-    print(list_of_authors_ids[-1:])
-    print(torch.max(edge_index_tensor_written_by[1,:]))
-
-    # %%
-    id_to_paper = {}
-    id_to_category = {}
-
-    # Eindeutige IDs für Paper und Kategorien erstellen
-    paper_id = 0
-    category_id = 0
-
-    edge_index_list_has_category = []
-    list_of_category_ids = []
-    list_of_cat_paper_ids = []
-
-    # Iteriere durch die Zeilen des DataFrames
-    for i in range(len(df_short)):
-        # Holen der ID des Papers und der Kategorie aus der aktuellen Zeile
-        paper_title = df_short['title'][i]
-        if paper_title not in id_to_paper.values():
-            id_to_paper[paper_id] = paper_title
-            paper_id += 1
-
-        categories = df_short['categories'][i]
-        for category in categories:
-            if category not in id_to_category.values():
-                id_to_category[category_id] = category
-                category_id += 1
-
-            list_of_category_ids.append(category_id -1)
-            list_of_cat_paper_ids.append(paper_id -1)
-
-    edge_index_list_has_category.append(list_of_cat_paper_ids)
-    edge_index_list_has_category.append(list_of_category_ids)
+    # edge paper has category
+    category_to_id = {category:i for i, category in enumerate(categories_list)}
+    id_to_category = {i:category for i, category in enumerate(categories_list)}
 
     data['category'].name = [id_to_category[i] for i in range(len(id_to_category))]
 
-    # Konvertiere die Liste in ein torch.Tensor-Objekt
-    edge_index_tensor_has_category = torch.tensor(edge_index_list_has_category, dtype=torch.long)
+    categories_in_paper = [[category_to_id[category] for category in categories] for categories in all_categories]
 
-    # Weise die Edge-Indizes dem HeteroData-Objekt zu
-    data['paper', 'has_category', 'category'].edge_index = edge_index_tensor_has_category
+    edge2 = [[paper_id, category_id] for paper_id, category_list in zip(idtitle, categories_in_paper) for category_id in category_list]
+    edge2 = torch.tensor(edge2).T
 
-    # %%
-    print(list_of_paper_ids[-1:])
-    print(torch.max(edge_index_tensor_has_category[0,:]))
+    data['paper', 'has_category', 'category'].edge_index = edge2
 
-    print(list_of_category_ids[-1:])
-    print(torch.max(edge_index_tensor_has_category[1,:]))
+    # edge paper has word word
+    all_words = words_list.union(title_words_list)
+    all_unique_words = OrderedSet(all_words)
 
-    # %%
-    edge_index_tensor_has_category
-
-    #%%
-    id_to_paper = {}
-    id_to_word = {}
-
-    # Eindeutige IDs für Paper und Wörter erstellen
-    paper_id = 0
-    word_id = 0
-
-    edge_index_list_has_word = []
-    list_of_word_paper_ids = []
-    list_of_word_ids = []
-
-    # Iteriere durch die Zeilen des DataFrames
-    for i in range(len(df)):
-        # Holen der ID des Papers und der Wörter aus der aktuellen Zeile
-        paper_title = df['title'][i]
-        if paper_title not in id_to_paper.values():
-            id_to_paper[paper_id] = paper_title
-            paper_id += 1
-
-        words = filtered_all_words[i]
-        for word in words:
-            if word not in id_to_word.values():
-                id_to_word[word_id] = word
-                word_id += 1
-
-            list_of_word_paper_ids.append(paper_id -1)
-            list_of_word_ids.append(word_id -1)
-
-    edge_index_list_has_word.append(list_of_word_paper_ids)
-    edge_index_list_has_word.append(list_of_word_ids)
+    word_to_id = {word:i for i, word in enumerate(all_unique_words)}
+    id_to_word = {i:word for i, word in enumerate(all_unique_words)}
 
     data['word'].name = [id_to_word[i] for i in range(len(id_to_word))]
 
-    # Konvertiere die Liste in ein torch.Tensor-Objekt
-    edge_index_tensor_has_word = torch.tensor(edge_index_list_has_word, dtype=torch.long)
+    words_in_paper = [[word_to_id[word] for word in words] for words in filtered_all_words]	
 
-    # Weise die Edge-Indizes dem HeteroData-Objekt zu
-    data['paper', 'has_word', 'word'].edge_index = edge_index_tensor_has_word
+    edge3 = [[paper_id, word_id] for paper_id, word_list in zip(idtitle, words_in_paper) for word_id in word_list]
+    edge3 = torch.tensor(edge3).T
 
-    #%%
-    edge_index_tensor_has_word
+    data['paper', 'has_word', 'word'].edge_index = edge3
 
-    #%%
-    print(list_of_paper_ids[-1:])
-    print(torch.max(edge_index_tensor_has_word[0,:]))
+    # edge paper has titleword word
+    words_in_title = [[word_to_id[word] for word in title] for title in filtered_title_words] 
 
-    print(list_of_word_ids[-1:])
-    print(torch.max(edge_index_tensor_has_word[1,:]))
+    edge4 = [[paper_id, word_id] for paper_id, word_list in zip(idtitle, words_in_title) for word_id in word_list]
+    edge4 = torch.tensor(edge4).T 
 
-    
+    data['paper', 'has_titleword', 'word'].edge_index = edge4
 
-    # %%
-    id_to_paper = {}
-    id_to_titleword = {}
+    # edge paper has journal journal
 
-    # Eindeutige IDs für Paper und Autoren erstellen	
-    paper_id = 0
-    titleword_id = 0
+    all_unique_journals = OrderedSet(journal_list)
 
-    edge_index_list_has_titleword = []
-    list_of_title_paper_ids = []
-    list_of_titleword_ids = []
-
-    # Iteriere durch die Zeilen des DataFrames
-    for i in range(len(df_short)):
-        # Holen der ID des Papers und des Autors aus der aktuellen Zeile
-        paper_title = df_short['title'][i]
-        if paper_title not in id_to_paper.values():
-            id_to_paper[paper_id] = paper_title
-            paper_id += 1
-
-        titlewords = all_title_words[i]
-        for titleword in titlewords:
-            if titleword not in id_to_titleword.values():
-                id_to_titleword[titleword_id] = titleword
-                titleword_id += 1
-
-            list_of_title_paper_ids.append(paper_id -1)
-            list_of_titleword_ids.append(titleword_id -1)
-
-    edge_index_list_has_titleword.append(list_of_title_paper_ids)
-    edge_index_list_has_titleword.append(list_of_titleword_ids)
-
-    # Konvertiere die Liste in ein torch.Tensor-Objekt
-    edge_index_tensor_has_titleword = torch.tensor(edge_index_list_has_titleword, dtype=torch.long)
-
-    # Weise die Edge-Indizes dem HeteroData-Objekt zu
-    data['paper', 'has_titleword', 'word'].edge_index = edge_index_tensor_has_titleword
-
-    # %%
-    edge_index_tensor_has_titleword
-
-    # %%
-    print(list_of_paper_ids[-1:])
-    print(torch.max(edge_index_tensor_has_titleword[0,:]))
-
-    print(list_of_titleword_ids[-1:])
-    print(torch.max(edge_index_tensor_has_titleword[1,:]))
-
-    # %%
-    id_to_paper = {}
-    id_to_journal = {}
-
-    # Eindeutige IDs für Paper und Autoren erstellen
-    paper_id = 0
-    journal_id = 0
-
-    edge_index_list_in_journal = []
-    list_of_journal_paper_ids = []
-    list_of_journal_ids = []
-
-    # Iteriere durch die Zeilen des DataFrames
-    for i in range(len(df_short)):
-        # Holen der ID des Papers und des Autors aus der aktuellen Zeile
-        paper_title = df_short['title'][i]
-        if paper_title not in id_to_paper.values():
-            id_to_paper[paper_id] = paper_title
-            paper_id += 1
-
-        journal = df_short['journal-ref'][i]
-        if journal not in id_to_journal.values():
-            id_to_journal[journal_id] = journal
-            journal_id += 1
-
-        list_of_journal_paper_ids.append(paper_id -1)
-        list_of_journal_ids.append(journal_id -1)
-
-    edge_index_list_in_journal.append(list_of_journal_paper_ids)
-    edge_index_list_in_journal.append(list_of_journal_ids)
+    journal_to_id = {journal:i for i, journal in enumerate(all_unique_journals)}
+    id_to_journal = {i:journal for i, journal in enumerate(all_unique_journals)}
 
     data['journal'].name = [id_to_journal[i] for i in range(len(id_to_journal))]
 
-    # Konvertiere die Liste in ein torch.Tensor-Objekt
-    edge_index_tensor_in_journal = torch.tensor(edge_index_list_in_journal, dtype=torch.long)
+    journal_in_paper = [journal_to_id[journal] if journal in journal_to_id else None for journal in all_unique_journals]
 
-    # Weise die Edge-Indizes dem HeteroData-Objekt zu
-    data['paper', 'in_journal', 'journal-ref'].edge_index = edge_index_tensor_in_journal
+    edge5 = [[paper_id, journal_id] for paper_id, journal_id in zip(idtitle, journal_in_paper)]
+    edge5 = torch.tensor(edge5).T
 
-    # %%
-    edge_index_tensor_in_journal
+    data['paper', 'in_journal', 'journal-ref'].edge_index = edge5
 
-    # %%
-    print(list_of_paper_ids[-1:])
-    print(torch.max(edge_index_tensor_in_journal[0,:]))
-
-    print(list_of_journal_ids[-1:])
-    print(torch.max(edge_index_tensor_in_journal[1,:]))
+    print('edges done')
+    
 
     # %% [markdown]
     # ### Assign weights
