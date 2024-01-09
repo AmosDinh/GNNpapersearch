@@ -43,7 +43,7 @@ def read_first_n_lines(file_path, n=10000):
 file_path = 'data/arxiv-metadata-oai-snapshot.json'
 
 # DataFrame erstellen
-df = read_first_n_lines(file_path, 10000)
+df = read_first_n_lines(file_path, 1000)
 
 # %%
 df.dtypes
@@ -123,8 +123,8 @@ for index, row in df_short.iterrows():
     all_authors.append(author)
     all_categories.append(category)
 
-print(all_authors)
-print(all_categories)
+# print(all_authors)
+# print(all_categories)
 
 # %% [markdown]
 # ### Delete Stopwords
@@ -140,7 +140,11 @@ filtered_all_words = []
 for words in all_words:
     filtered_words = [word for word in words if word not in stop_words]
     filtered_all_words.append(filtered_words)
-
+filtered_title_words = []
+for words in all_title_words:
+    filtered_words = [word for word in words if word not in stop_words]
+    filtered_title_words.append(filtered_words)
+    
 # %% [markdown]
 # ### List with every word
 
@@ -150,7 +154,7 @@ if not os.path.exists("hetero_graph_temp.pt"):
 
     words_values = [word for sublist in filtered_all_words for word in sublist]
 
-    print(words_values)
+    # print(words_values)
 
     authors_values = [author for sublist in all_authors for author in sublist]
 
@@ -240,9 +244,9 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     author_to_id = {author:i for i, author in enumerate(authors_list)}
     id_to_author = {i:author for i, author in enumerate(authors_list)}
 
-    data['paper'].title = [id_to_paper[i] for i in range(len(id_to_paper))]
+    data['paper'].name = [id_to_paper[i] for i in range(len(id_to_paper))]
     data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
-
+    print('paper author')
     authors_in_paper = [[author_to_id[author] for author in authors] for authors in all_authors]
 
     edge1 = [[paper_id, author_id] for paper_id, author_list in zip(idtitle, authors_in_paper) for author_id in author_list]
@@ -269,9 +273,9 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     word_to_id = {word:i for i, word in enumerate(all_unique_words)}
     id_to_word = {i:word for i, word in enumerate(all_unique_words)}
-
+   
     data['word'].name = [id_to_word[i] for i in range(len(id_to_word))]
-
+    print('words in paper')
     words_in_paper = [[word_to_id[word] for word in words] for words in filtered_all_words]	
 
     edge3 = [[paper_id, word_id] for paper_id, word_list in zip(idtitle, words_in_paper) for word_id in word_list]
@@ -295,13 +299,13 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     id_to_journal = {i:journal for i, journal in enumerate(all_unique_journals)}
 
     data['journal'].name = [id_to_journal[i] for i in range(len(id_to_journal))]
-
+    print('journal in paper')
     journal_in_paper = [journal_to_id[journal] if journal in journal_to_id else None for journal in all_unique_journals]
 
     edge5 = [[paper_id, journal_id] for paper_id, journal_id in zip(idtitle, journal_in_paper)]
     edge5 = torch.tensor(edge5).T
 
-    data['paper', 'in_journal', 'journal-ref'].edge_index = edge5
+    data['paper', 'in_journal', 'journal'].edge_index = edge5
 
     print('edges done')
     
@@ -324,23 +328,23 @@ else:
 
     # %%
 if not os.path.exists("hetero_graph_tfidf.pkl"):
-    id_to_paper = {}
-    id_to_word = {}
+    # id_to_paper = {}
+    # id_to_word = {}
 
-    # creates mapping in order
-    word_id = 0
+    # # creates mapping in order
+    # word_id = 0
 
-    # Iteriere durch die Zeilen des DataFrames
-    for i, words in enumerate(filtered_all_words):
-        paper_title = df_short['title'][i]
-        if paper_title not in id_to_paper:
-            id_to_paper[paper_title] = paper_id
-            paper_id += 1
+    # # Iteriere durch die Zeilen des DataFrames
+    # for i, words in enumerate(filtered_all_words):
+    #     paper_title = df_short['title'][i]
+    #     if paper_title not in id_to_paper:
+    #         id_to_paper[paper_title] = paper_id
+    #         paper_id += 1
 
-        for word in words:
-            if word not in id_to_word:
-                id_to_word[word] = word_id
-                word_id += 1
+    #     for word in words:
+    #         if word not in id_to_word:
+    #             id_to_word[word] = word_id
+    #             word_id += 1
 
 
     # %%
@@ -349,7 +353,7 @@ if not os.path.exists("hetero_graph_tfidf.pkl"):
         return text
 
     # TF-IDF Vektorizer mit der Identitätsfunktion als Tokenizer
-    vectorizer = TfidfVectorizer(tokenizer=identity_tokenizer, lowercase=False, vocabulary=id_to_word)
+    vectorizer = TfidfVectorizer(tokenizer=identity_tokenizer, lowercase=False, vocabulary=word_to_id)
 
     # Angenommen, 'filtered_all_words' ist eine Liste von Listen von Token
     tfidf_matrix = vectorizer.fit_transform(filtered_all_words)
@@ -357,11 +361,13 @@ if not os.path.exists("hetero_graph_tfidf.pkl"):
     # Initialisierung der Kantenliste und der TF-IDF-Gewichte
     edge_index_list_has_word = [[], []]
     tfidf_weights = []
+    
+    paper_to_id = {title:i for i, title in id_to_paper.items()}
 
     # Extraktion der TF-IDF-Werte und Erstellung der Kanten
-    for i in range(len(df_short)):
+    for i in tqdm(range(len(df_short))):
         paper_title = df_short['title'][i]
-        paper_idx = id_to_paper[paper_title]
+        paper_idx = paper_to_id[paper_title]
 
         words = filtered_all_words[i]
         for word in words:
@@ -426,8 +432,8 @@ if not os.path.exists("hetero_graph_pmi.pkl"):
             # print(f"{finder.ngram_fd[bigram]}, {finder.N}, {pmi_score}, {npmi}")
 
             # Hinzufügen der berechneten NPMI-Werte und Edge-Index zur Liste
-            edge_index[0].append(id_to_word[word1])
-            edge_index[1].append(id_to_word[word2])
+            edge_index[0].append(word_to_id[word1])
+            edge_index[1].append(word_to_id[word2])
             npmi_values.append(npmi)
 
     # Konvertieren in PyTorch Tensoren
@@ -465,45 +471,45 @@ else:
     # %%
     # Angenommen, 'documents' ist eine Liste von Listen, wobei jede innere Liste die Wortindizes eines Dokuments enthält
     
-if not os.path.exists("hetero_graph_jaccard.pkl"):
+# if not os.path.exists("hetero_graph_jaccard.pkl"):
 
-    documents = filtered_all_words
+#     documents = filtered_all_words
 
-    # Berechnen Sie die Jaccard-Ähnlichkeit für jedes Dokumentenpaar
-    doc_edge_index = [[], []]
-    doc_similarity_values = []
+#     # Berechnen Sie die Jaccard-Ähnlichkeit für jedes Dokumentenpaar
+#     doc_edge_index = [[], []]
+#     doc_similarity_values = []
 
-    def jaccard_set(list1, list2):
-        """Define Jaccard Similarity function for two sets"""
-        intersection = len(list(set(list1).intersection(list2)))
-        union = (len(list1) + len(list2)) - intersection
-        return float(intersection) / union
+#     def jaccard_set(list1, list2):
+#         """Define Jaccard Similarity function for two sets"""
+#         intersection = len(list(set(list1).intersection(list2)))
+#         union = (len(list1) + len(list2)) - intersection
+#         return float(intersection) / union
 
-    for i in tqdm(range(len(documents)), desc="Calculate Jaccard similarity"):
-        for j in range(i + 1, len(documents)):
-            similarity = jaccard_set(documents[i], documents[j])
+#     for i in tqdm(range(len(documents)), desc="Calculate Jaccard similarity"):
+#         for j in tqdm(range(i + 1, len(documents))):
+#             similarity = jaccard_set(documents[i], documents[j])
             
-            # Fügen Sie die Kanten und Ähnlichkeitswerte hinzu
-            doc_edge_index[0].append(i)
-            doc_edge_index[1].append(j)
-            doc_similarity_values.append(similarity)
+#             # Fügen Sie die Kanten und Ähnlichkeitswerte hinzu
+#             doc_edge_index[0].append(i)
+#             doc_edge_index[1].append(j)
+#             doc_similarity_values.append(similarity)
 
-    # Konvertieren in PyTorch Tensoren
-    doc_edge_index_tensor = torch.tensor(doc_edge_index, dtype=torch.long)
-    doc_similarity_values_tensor = torch.tensor(doc_similarity_values, dtype=torch.float)
+#     # Konvertieren in PyTorch Tensoren
+#     doc_edge_index_tensor = torch.tensor(doc_edge_index, dtype=torch.long)
+#     doc_similarity_values_tensor = torch.tensor(doc_similarity_values, dtype=torch.float)
 
-    # Hinzufügen der Kanten und Kantenattribute zum HeteroData-Objekt
-    doc_edge_type = ('doc', 'similarity', 'doc')
-    data[doc_edge_type].edge_index = doc_edge_index_tensor
-    data[doc_edge_type].edge_attr = doc_similarity_values_tensor
+#     # Hinzufügen der Kanten und Kantenattribute zum HeteroData-Objekt
+#     doc_edge_type = ('doc', 'similarity', 'doc')
+#     data[doc_edge_type].edge_index = doc_edge_index_tensor
+#     data[doc_edge_type].edge_attr = doc_similarity_values_tensor
 
-    with open('hetero_graph_jaccard.pkl', 'wb') as f:
-        pickle.dump(data, f)
+#     with open('hetero_graph_jaccard.pkl', 'wb') as f:
+#         pickle.dump(data, f)
         
-else:
-    print('skiptfidf')
-    with open('hetero_graph_jaccard.pkl', 'rb') as f:
-        data = pickle.load(f)
+# else:
+#     print('skiptfidf')
+#     with open('hetero_graph_jaccard.pkl', 'rb') as f:
+#         data = pickle.load(f)
 
 
 
