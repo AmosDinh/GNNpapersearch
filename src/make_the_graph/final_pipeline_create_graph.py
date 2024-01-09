@@ -140,6 +140,7 @@ filtered_all_words = []
 for words in all_words:
     filtered_words = [word for word in words if word not in stop_words]
     filtered_all_words.append(filtered_words)
+    
 filtered_title_words = []
 for words in all_title_words:
     filtered_words = [word for word in words if word not in stop_words]
@@ -199,7 +200,7 @@ if not os.path.exists("hetero_graph_temp.pt"):
 
     # %%
     data = HeteroData()
-    data['paper'].num_nodes = len(df_short)
+    # data['paper'].num_nodes = len(df_short)
     data['paper'].license = licenses_list
     data['paper'].doi = doi_list
     # data['paper'].title = title_list
@@ -208,16 +209,16 @@ if not os.path.exists("hetero_graph_temp.pt"):
     data['paper'].date = date_list
     data['paper'].id = id_list
 
-    data['author'].num_nodes = len(authors_list)
+    # data['author'].num_nodes = len(authors_list)
     # data['author'].name = authors_list
 
-    data['category'].num_nodes = len(categories_list)
+    # data['category'].num_nodes = len(categories_list)
     # data['category'].name = categories_list
 
-    data['journal'].num_nodes = len(journal_list_set)
+    # data['journal'].num_nodes = len(journal_list_set)
     # data['journal'].name = journal_list
 
-    data['word'].num_nodes = len(words_list)
+    # data['word'].num_nodes = len(words_list)
     # data['word'].name = words_list
     torch.save(data, "hetero_graph_temp.pt")
 
@@ -245,7 +246,9 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     id_to_author = {i:author for i, author in enumerate(authors_list)}
 
     data['paper'].name = [id_to_paper[i] for i in range(len(id_to_paper))]
+    data['paper'].num_nodes = len(data['paper'].name)
     data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
+    data['author'].num_nodes = len(data['author'].name)
     print('paper author')
     authors_in_paper = [[author_to_id[author] for author in authors] for authors in all_authors]
 
@@ -259,6 +262,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     id_to_category = {i:category for i, category in enumerate(categories_list)}
 
     data['category'].name = [id_to_category[i] for i in range(len(id_to_category))]
+    data['category'].num_nodes = len(data['category'].name)
 
     categories_in_paper = [[category_to_id[category] for category in categories] for categories in all_categories]
 
@@ -275,9 +279,10 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     id_to_word = {i:word for i, word in enumerate(all_unique_words)}
    
     data['word'].name = [id_to_word[i] for i in range(len(id_to_word))]
+    data['word'].num_nodes = len(data['word'].name)
     print('words in paper')
     words_in_paper = [[word_to_id[word] for word in words] for words in filtered_all_words]	
-
+ 
     edge3 = [[paper_id, word_id] for paper_id, word_list in zip(idtitle, words_in_paper) for word_id in word_list]
     edge3 = torch.tensor(edge3).T
 
@@ -285,7 +290,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
 
     # edge paper has titleword word
     words_in_title = [[word_to_id[word] for word in title] for title in filtered_title_words] 
-
+    
     edge4 = [[paper_id, word_id] for paper_id, word_list in zip(idtitle, words_in_title) for word_id in word_list]
     edge4 = torch.tensor(edge4).T 
 
@@ -299,6 +304,7 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     id_to_journal = {i:journal for i, journal in enumerate(all_unique_journals)}
 
     data['journal'].name = [id_to_journal[i] for i in range(len(id_to_journal))]
+    data['journal'].num_nodes = len(data['journal'].name)
     print('journal in paper')
     journal_in_paper = [journal_to_id[journal] if journal in journal_to_id else None for journal in all_unique_journals]
 
@@ -360,32 +366,16 @@ if not os.path.exists("hetero_graph_tfidf.pkl"):
 
     # Initialisierung der Kantenliste und der TF-IDF-Gewichte
     edge_index_list_has_word = [[], []]
-    tfidf_weights = []
+    
     
     paper_to_id = {title:i for i, title in id_to_paper.items()}
-
-    # Extraktion der TF-IDF-Werte und Erstellung der Kanten
-    for i in tqdm(range(len(df_short))):
-        paper_title = df_short['title'][i]
-        paper_idx = paper_to_id[paper_title]
-
-        words = filtered_all_words[i]
-        for word in words:
-            if word in id_to_word:
-                word_idx = id_to_word[word]
-                tfidf_weight = tfidf_matrix[i, id_to_word[word]] # FEHLER HIER
-
-                if tfidf_weight:  # Fügen Sie nur Kanten für positive TF-IDF-Werte hinzu
-                    edge_index_list_has_word[0].append(paper_idx)
-                    edge_index_list_has_word[1].append(word_idx)
-                    tfidf_weights.append(tfidf_weight)
-
-    # Konvertiere die Listen in torch.Tensor-Objekte
-    edge_index_tensor_has_word = torch.tensor(edge_index_list_has_word, dtype=torch.long)
+    
+    tfidf_weights = [tfidf_matrix[edge[0], edge[1]] for edge in tqdm(data['paper', 'has_word', 'word'].edge_index.T)]
+            
     tfidf_weights_tensor = torch.tensor(tfidf_weights, dtype=torch.float)
 
     # Weise die Edge-Indizes und -Attribute dem HeteroData-Objekt zu
-    data['paper', 'has_word', 'word'].edge_index = edge_index_tensor_has_word
+    # data['paper', 'has_word', 'word'].edge_index = edge_index_tensor_has_word
     data['paper', 'has_word', 'word'].edge_attr = tfidf_weights_tensor
 
     with open('hetero_graph_tfidf.pkl', 'wb') as f:
@@ -397,10 +387,10 @@ else:
         data = pickle.load(f)
 
     # %%
-    tfidf_df = pd.DataFrame({
-        'tfidf_weight': tfidf_weights
-    })
-    tfidf_df.tfidf_weight.hist(bins=100)
+    # tfidf_df = pd.DataFrame({
+        # 'tfidf_weight': tfidf_weights
+    # })
+    # tfidf_df.tfidf_weight.hist(bins=100)
 
     # %% [markdown]
     # #### PMI: word-word
@@ -422,7 +412,7 @@ if not os.path.exists("hetero_graph_pmi.pkl"):
     # Berechnen der NPMI-Werte
     npmi_values = []
 
-    for bigram, pmi_score in finder.score_ngrams(bigram_measures.pmi):
+    for bigram, pmi_score in tqdm(finder.score_ngrams(bigram_measures.pmi)):
         if pmi_score > 0: # instead of npmi > 0
             word1, word2 = bigram
 
@@ -432,8 +422,12 @@ if not os.path.exists("hetero_graph_pmi.pkl"):
             # print(f"{finder.ngram_fd[bigram]}, {finder.N}, {pmi_score}, {npmi}")
 
             # Hinzufügen der berechneten NPMI-Werte und Edge-Index zur Liste
-            edge_index[0].append(word_to_id[word1])
-            edge_index[1].append(word_to_id[word2])
+            a = word_to_id[word1]
+            b = word_to_id[word2]
+            if a == b:
+                continue
+            edge_index[0].append(a)
+            edge_index[1].append(b)
             npmi_values.append(npmi)
 
     # Konvertieren in PyTorch Tensoren
