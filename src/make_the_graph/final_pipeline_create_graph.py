@@ -151,27 +151,27 @@ for words in all_title_words:
 
 # %%
 # create lists with every value without double lists
+# if not os.path.exists("hetero_graph_temp.pt"):
+
+words_values = [word for sublist in filtered_all_words for word in sublist]
+
+# print(words_values)
+
+authors_values = [author for sublist in all_authors for author in sublist]
+
+categories_values = [category for sublist in all_categories for category in sublist]
+
+title_values = [title for sublist in all_title_words for title in sublist]
+
+# %% [markdown]
+# ### Delete duplicates
+
+# %%
+categories_list = OrderedSet(categories_values)
+authors_list = OrderedSet(authors_values)
+title_words_list = OrderedSet(title_values)
+words_list = OrderedSet(words_values)
 if not os.path.exists("hetero_graph_temp.pt"):
-
-    words_values = [word for sublist in filtered_all_words for word in sublist]
-
-    # print(words_values)
-
-    authors_values = [author for sublist in all_authors for author in sublist]
-
-    categories_values = [category for sublist in all_categories for category in sublist]
-
-    title_values = [title for sublist in all_title_words for title in sublist]
-
-    # %% [markdown]
-    # ### Delete duplicates
-
-    # %%
-    categories_list = OrderedSet(categories_values)
-    authors_list = OrderedSet(authors_values)
-    title_words_list = OrderedSet(title_values)
-    words_list = OrderedSet(words_values)
-
     # %% [markdown]
     # ### Liste mit allen Attributen erstellen
 
@@ -231,14 +231,16 @@ print('heterograph')
     # ### Create edges
 
     # %%
+# if not os.path.exists("hetero_graph_temp3.pkl"):
+
+# edge paper written by author
+unique_titles = df_short['title'].unique()
+
+
+id_to_paper = {i:title for i, title in enumerate(unique_titles)}
+
 if not os.path.exists("hetero_graph_temp3.pkl"):
-
-    # edge paper written by author
-    unique_titles = df_short['title'].unique()
     title_to_id = {title:i for i, title in enumerate(unique_titles)}
-    id_to_paper = {i:title for i, title in enumerate(unique_titles)}
-
-
     idtitle = df_short['title'].apply(lambda x: title_to_id[x])
 
 
@@ -272,10 +274,12 @@ if not os.path.exists("hetero_graph_temp3.pkl"):
     data['paper', 'has_category', 'category'].edge_index = edge2
 
     # edge paper has word word
-    all_words = words_list.union(title_words_list)
-    all_unique_words = OrderedSet(all_words)
+all_words = words_list.union(title_words_list)
+all_unique_words = OrderedSet(all_words)
 
-    word_to_id = {word:i for i, word in enumerate(all_unique_words)}
+word_to_id = {word:i for i, word in enumerate(all_unique_words)}
+
+if not os.path.exists("hetero_graph_temp3.pkl"):
     id_to_word = {i:word for i, word in enumerate(all_unique_words)}
    
     data['word'].name = [id_to_word[i] for i in range(len(id_to_word))]
@@ -360,24 +364,33 @@ if not os.path.exists("hetero_graph_tfidf.pkl"):
 
     # TF-IDF Vektorizer mit der Identitätsfunktion als Tokenizer
     vectorizer = TfidfVectorizer(tokenizer=identity_tokenizer, lowercase=False, vocabulary=word_to_id)
-
+    print('a')
     # Angenommen, 'filtered_all_words' ist eine Liste von Listen von Token
     tfidf_matrix = vectorizer.fit_transform(filtered_all_words)
-
+    print('b')
     # Initialisierung der Kantenliste und der TF-IDF-Gewichte
     edge_index_list_has_word = [[], []]
     
     
-    paper_to_id = {title:i for i, title in id_to_paper.items()}
+    #paper_to_id = {title:i for i, title in id_to_paper.items()}
+    print('c')
+    #tfidf_weights = [tfidf_matrix[edge[0], edge[1]] for edge in data['paper', 'has_word', 'word'].edge_index.T]
+    tfidf_weights = []
+    print('e')
+    len_index = data['paper', 'has_word', 'word'].edge_index.shape[1]
+    # for i in tqdm(range(len_index)):
+    #     edge0 = data['paper', 'has_word', 'word'].edge_index[0][i]
+    #     edge1 = data['paper', 'has_word', 'word'].edge_index[1][i]
+    #     tfidf_weights.append(tfidf_matrix[edge0, edge1])
     
-    tfidf_weights = [tfidf_matrix[edge[0], edge[1]] for edge in tqdm(data['paper', 'has_word', 'word'].edge_index.T)]
-            
+    tfidf_weights = [tfidf_matrix[data['paper', 'has_word', 'word'].edge_index[0][i], data['paper', 'has_word', 'word'].edge_index[1][i]] for i in tqdm(range(len_index))]
+    print('d')
     tfidf_weights_tensor = torch.tensor(tfidf_weights, dtype=torch.float)
-
+    print('e')
     # Weise die Edge-Indizes und -Attribute dem HeteroData-Objekt zu
     # data['paper', 'has_word', 'word'].edge_index = edge_index_tensor_has_word
     data['paper', 'has_word', 'word'].edge_attr = tfidf_weights_tensor
-
+    print('f')
     with open('hetero_graph_tfidf.pkl', 'wb') as f:
         pickle.dump(data, f)
         
