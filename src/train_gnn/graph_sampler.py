@@ -47,7 +47,7 @@ import pickle
 
 def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=50, remove_text_attr=True):
     if filename is None:
-        filename = 'hetero_graph_final.pkl'
+        filename = 'arxiv_author_paper_graph_training_v1.pkl'
     size = os.path.getsize(filename)
     print('size of dataset on disk: ', size/1e9, 'gb')
 
@@ -60,8 +60,8 @@ def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=5
     
     def top_k_mask(scores, indices, top_k ):
         # Make sure we are using the GPU
-        scores = scores.cuda()
-        indices = indices.cuda()
+        # scores = scores.cuda()
+        # indices = indices.cuda()
         
         # Create an empty mask with the same shape as scores
         mask = torch.zeros_like(scores, dtype=torch.bool)
@@ -74,37 +74,86 @@ def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=5
         # Set mask for indices where count <= top_k
         mask[~torch.isin(indices,large_indices)] = True
         # For indices where count > 50, we only keep top 50 scores
-        for idx in tqdm(large_indices):
-            idx_mask = (indices == idx)
-            values, idxs = scores[idx_mask].topk(top_k)
-            a = mask[idx_mask]
-            a[idxs] = True
-            mask[idx_mask] = a
+        # if len(large_indices) > 0:
+        #     idx_masks = [(indices == idx) for idx in tqdm(large_indices)]
+        #     values_idxs = [scores[idx_mask].topk(top_k) for idx_mask in tqdm(idx_masks)]
+        #     for idx_mask, (values, idxs) in tqdm(zip(idx_masks, values_idxs)):
+        #         mask[idx_mask][idxs] = True
+        
+        
+        # argsort the scores
+        # first sort the numbers by the scores desceding
+        # then sort the numbers in descending order such that the same numbers are neighbors but the  corresponding scores are still sorted in descending order
+        # then get first top_k indices per number
+        sorted_scores, sorted_score_indices = torch.sort(scores, descending=True)
+        sorted_numbers = indices[sorted_score_indices]
+        
+        sorted_numbers_by_score_then_by_number, corresponding_mask = torch.sort(sorted_numbers, descending=True, stable=True)
+        
+        sorted_score_indices_by_score_then_by_number = sorted_score_indices[corresponding_mask]
+        
+        _, counts = torch.unique(sorted_numbers_by_score_then_by_number, sorted=True, return_counts=True)
+        counts = torch.flip(counts, [0]) # descending
+        start = torch.cat((torch.tensor([0]),torch.cumsum(counts, dim=0)[:-1]))
+        end = start + top_k
+        for s, e in zip(start, end):
+            mask[sorted_score_indices_by_score_then_by_number[s:e]] = True
+        
+        # for idx in tqdm(large_indices):
+            # mask[sorted_score_indices[(sorted_indices == idx)][:top_k]] = True
             
+        # for idx in tqdm(large_indices):
+        #     idx_mask = (sorted_indices == idx)
+        #     reverse_map = sorted_score_indices[idx_mask][:top_k]
+        #     mask[reverse_map] = True
+            
+        print('mask trues', torch.sum(mask), 'of total', mask.shape[0])
         return mask.cpu()
 
     
    
     if filter_top_k:
-        e = ('skills', 'job_skill', 'jobs')
-        rev_e = (e[2],'rev_'+e[1],e[0])
-        cache_dir = 'cache'
-        if not os.path.exists(cache_dir):
-            os.makedirs(cache_dir)
-        
-        mask_path = os.path.join(cache_dir, f'mask{top_k}.pt') 
-        
-        if os.path.isfile(mask_path):
-            mask = torch.load(mask_path)
-        else:
-            mask = top_k_mask(data[e].edge_attr.squeeze(1), data[e].edge_index[1,:], top_k)
-            torch.save(mask, mask_path) 
-        
-        data[e].edge_attr = data[e].edge_attr[mask]
-        data[rev_e].edge_attr = data[rev_e].edge_attr[mask]
-        data[e].edge_index = data[e].edge_index[:,mask]
-        data[rev_e].edge_index = data[rev_e].edge_index[:,mask]
-        print('keep',torch.sum(mask), 'of total',mask.shape[0])
+        def filter_once(edge, rev_e=None, keep_n_foreach_left=True, top_k=top_k):
+            e = edge
+            #rev_e = (e[2],'rev_'+e[1],e[0])
+            
+            if data[e].edge_attr.dim() == 1:
+                data[e].edge_attr = data[e].edge_attr.unsqueeze(1)
+            if rev_e is not None:
+                if data[rev_e].edge_attr.dim() == 1:
+                    data[rev_e].edge_attr = data[rev_e].edge_attr.unsqueeze(1)
+            
+            cache_dir = 'cache'
+            if not os.path.exists(cache_dir):
+                os.makedirs(cache_dir)
+            
+            mask_path = os.path.join(cache_dir, f'mask{top_k}_{"".join(list(edge))}.pt') 
+            
+            # if os.path.isfile(mask_path):
+                # mask = torch.load(mask_path)
+            # else:
+            if keep_n_foreach_left:
+                mask = top_k_mask(data[e].edge_attr.squeeze(1), data[e].edge_index[0,:], top_k)
+            else: # for each right
+                mask = top_k_mask(data[e].edge_attr.squeeze(1), data[e].edge_index[1,:], top_k)
+                    
+                # torch.save(mask, mask_path) 
+            print('mask', mask.shape, data[e].edge_attr.shape, data[e].edge_index.shape)
+            
+            data[e].edge_attr = data[e].edge_attr[mask]
+            data[e].edge_index = data[e].edge_index[:,mask]
+            if rev_e is not None:
+                data[rev_e].edge_attr = data[rev_e].edge_attr[mask]
+                data[rev_e].edge_index = data[rev_e].edge_index[:,mask]
+                
+            print('keep',torch.sum(mask), 'of total',mask.shape[0])
+
+        filter_once(('paper', 'has_word', 'word'), ('word', 'rev_has_word', 'paper'), keep_n_foreach_left=True) # for each paper only the top k words kept 
+        filter_once(('word', 'co_occurs_with', 'word'), keep_n_foreach_left=True, top_k=top_k*2)
+        filter_once(('word', 'co_occurs_with', 'word'), keep_n_foreach_left=False, top_k=top_k*2)
+    
+    data[('word','rev_co_occurs_with','word')].edge_index = data['word','co_occurs_with','word'].edge_index.flip(0)
+    data[('word','rev_co_occurs_with','word')].edge_attr = data['word','co_occurs_with','word'].edge_attr
     
     
     from torch_geometric import seed_everything
@@ -116,11 +165,13 @@ def get_datasets(get_edge_attr=False, filename=None, filter_top_k=False, top_k=5
     edge_types = []
     rev_edge_types = []
     for edge_type in data.edge_types:
+        print('len', edge_type, data[edge_type].edge_index.shape[1])
         if edge_type[1].startswith('rev_'):
             rev_edge_types.append(edge_type)
         else:
             edge_types.append(edge_type)
 
+    
     transform = T.RandomLinkSplit(
         is_undirected=True,
         edge_types=edge_types,
