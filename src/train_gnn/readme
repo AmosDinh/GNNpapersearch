@@ -1,0 +1,11 @@
+Note: Training done on Kaggle P100 
+
+
+training code:
+train_hgt_unsupervised.ipynb
+
+code to post process the graph after make_the_graph/final_pipeline_create_graph.py:
+add_reverse_edges.ipynb 
+
+extract_embeddings.ipynb:
+create embeddings with trained model
