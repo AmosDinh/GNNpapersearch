@@ -1,0 +1,12 @@
+\begin{thebibliography}{2}
+
+\bibitem{Yao19}
+L.~Yao, C.~Mao, Y.~Luo, \emph{Graph convolutional networks for text
+  classification}, in \emph{Proceedings of the AAAI conference on artificial
+  intelligence} (2019), Vol.~33, pp. 7370--7377
+
+\bibitem{Han22}
+S.C. Han, Z.~Yuan, K.~Wang, S.~Long, J.~Poon, \emph{Understanding graph
+  convolutional networks for text classification} (2022), \texttt{2203.16060}
+
+\end{thebibliography}

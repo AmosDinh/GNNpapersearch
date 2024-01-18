@@ -1,0 +1,240 @@
+%%%%%%%%%%%%%%%%%%%%%%% file template.tex %%%%%%%%%%%%%%%%%%%%%%%%%
+% $Id: woc_2col.tex 158 2017-01-19 23:08:23Z foley $
+% $URL: https://repository.cs.ru.is/svn/template/tvd/journal/matec-woc/woc_2col.tex $
+% 
+% This is a template file for Web of Conferences Journal
+%
+% Copy it to a new file with a new name and use it as the basis
+% for your article
+%
+% This template has been updated to match the Word Template's contents
+% by Joseph T. Foley < foley AT RU dot IS >
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%% EDP Science %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+%%%\documentclass[option]{webofc}
+%%% "twocolumn" for typesetting an article in two columns format (default one column)
+%
+\documentclass[twocolumn]{webofc}
+\usepackage[varg]{txfonts}   % Web of Conferences font
+\usepackage{booktabs}
+\usepackage{array} %% needed for advanced table manipulation
+\usepackage{lipsum}  
+%% Column types from http://tex.stackexchange.com/questions/54069/table-with-text-wrapping
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\graphicspath{{graphics/}{graphics/arch/}{Graphics/}{./}} % Look in these folders for graphics
+%
+% Put here some packages required or/and some personnal commands
+%
+%
+\begin{document}
+%
+\title{Enhancing Academic Paper Search with Graph Neural Networks: A Test Beyond Classification}
+%
+% subtitle is optionnal
+%
+%%%\subtitle{Do you have a subtitle?\\ If so, write it here}
+
+\author{\firstname{Amos} \lastname{Dinh}\inst{1}\fnsep\thanks{\email{Mail address for first
+    author}} \and
+        \firstname{Henrik} \lastname{Rathai}\inst{1}\fnsep\thanks{\email{s212387@student.dhbw-mannheim.de}} \and
+        \firstname{Ilgar} \lastname{Korkmaz}\inst{1}\fnsep\thanks{\email{Mail address for last
+             author if necessary}} \and
+        \firstname{Matthias} \lastname{Fast}\inst{1}\fnsep\thanks{\email{Mail address for last
+             author if necessary}}
+        % etc.
+}
+
+\institute{Cooperative State University Baden-Wuerttemberg Mannheim, Computer Science Department, Coblitzallee 1-9, 68163 Mannheim
+% \and
+%            the second here 
+% \and
+%            Last address
+          }
+
+\abstract{%This paper introduces a pioneering approach to academic paper search by leveraging Graph Neural Networks (GNNs) for enhanced text classification. We propose a novel framework that constructs a complex graph incorporating various nodes representing academic papers, words, authors, and possibly publishers. In this graph, connections between papers and words are established based on the content of the papers, with edge weights determined by term frequency-inverse document frequency (tf-idf) metrics. Additionally, word-word connections are formed based on co-occurrence statistics, creating a rich, interconnected semantic network.
+
+This paper presents an innovative approach for academic paper search, utilizing Graph Neural Networks (GNNs) for advanced text classification. The proposed framework constructs a graph linking papers, words, and authors, where edges are weighted by tf-idf metrics and word co-occurrence statistics. GNNs, potentially incorporating models like TransE, are employed to learn entity embeddings. This enriches the representation of academic content beyond simple keywords, allowing for a vector database-powered similarity search. This method enables users to find related papers, explore topics through keywords, and connect with relevant authors, significantly enhancing the efficiency and depth of academic literature exploration...
+}
+%
+\maketitle
+%
+% \section*{README!}\label{sec:readme}
+% \textbf{Template Author's Note:  Much of this template is taken from the Microsoft Word Template.
+%   This means that most of the instructions described are only if you are using MS Word.
+%   If you are using \LaTeX{}, all the formatting has been taken care of by the style enforced by the \path{webofc.cls} file.
+%   This includes formatting and placement of the citations, as long as you fill in the BibTeX file \path{references.bib} correctly.
+%   If you have \path{woc.bst} it will ensure that the citations meet the formatting required by MATEC Web of Science.
+%   Enjoy!
+% }
+\section{Introduction}\label{sec:page-layout}
+
+Write Introduction
+
+\section{Related Work}\label{sec:fig-tables}
+
+Compare to related Work \cite[p.~X]{Yao19} \cite[p.~XX]{Han22}
+
+Classification vs Search
+
+\section{Proposed Approach}\label{sec:equat-math}
+
+Explain paper structure e.g. using picture
+
+
+\subsection{Text pre-processing}
+
+Extract new features from dataset: timestamp, pages
+
+format columns
+
+Lemmatization of abstract and title words
+
+Delete stopwords
+
+
+\subsection{Graph Modeling}
+
+explain theoretical graph modeling
+
+Create Hetero-Object, e.g. picture of simple graph
+
+\subsection{Assign edge weights}
+
+There are multiple ways to weight edges. In this paper the tf-idf metric is used for document-word edges and pmi for word-word co occurrencies.
+
+term frequency-inverse document frequency (TF-IDF) 
+
+
+point-wise mutual information (PMI)
+
+explain normalized pmi
+
+To analyze word relationships across a corpus, you can use a fixed-size sliding window to gather word co-occurrence data. PMI to calculate the weights between word pairs. The weight of the connection between two word nodes (i and j) is thus defined using this approach.
+
+\[A_{ij} = 
+\begin{cases} 
+    \text{nPMI}(i, j) & \text{if } i, j \text{ are words and } \text{PMI}(i, j) > 0 \\
+    \text{TF-IDF}_{ij} & \text{if } i \text{ is document, } j \text{ is word} \\
+\end{cases}
+\]
+
+
+\subsection{Training}
+
+explain theoretical basis of training
+
+
+\section{Experiment Setup}
+
+Use case with arxiv dataset
+
+\subsection{Dataset}
+
+describe dataset
+
+\subsection{Implementation Details}
+
+e.g. used parameter
+
+used embeddings
+
+Graph Edge Setup: window size ist set to 10 for pmi calculation
+
+Graph Learning Setup: layer, dropout rate , ...
+
+
+\subsection{Results}
+
+compare to tfidf, Benchmark, discuss results
+
+\section{Implementation/Deployment}
+
+explain implementation in vector database
+
+\section{Conclusion and Future Work}
+
+Recommendations for future work
+
+\lipsum[1-3]
+
+
+% \section*{References}
+
+
+% Online references will be linked to their original source, only if possible.
+% To enable this linking extra care should be taken when preparing reference lists.
+
+% References should be cited in the text by placing sequential numbers in brackets (for example, [1], [2, 5, 7], [8--10]).
+% They should be numbered in the order in which they are cited.
+% A complete reference should provide enough information to locate the article.
+% References to printed journal articles should typically contain:
+
+
+% \begin{itemize}
+% \item The authors, in the form: initials of the first names followed by last name (only the first letter capitalized with full stops after the initials),
+% \item The journal title (abbreviated), 
+% \item The volume number (bold type),
+% \item The article number or the page numbers,
+% \item The year of publication (in brackets). 
+% \end{itemize}
+% Authors should use the forms shown in Table~\ref{tab:font-styles-reference-journal} in the final reference list.
+
+% \begin{table}
+%   \centering
+%   \caption{Font styles for a reference to a journal article.}
+%   \label{tab:font-styles-reference-journal}
+%   \begin{tabular}{C{25mm}p{25mm}}\toprule
+%     \textbf{Element} &\textbf{Style}\\\midrule
+%     Authors &Normal, Initials followed by last name\\
+%     Journal title & Normal, Abbreviated\\
+%     Book title, Proceedings title & Italic\\
+%     Volume number &Bold\\
+%     Page number &Normal\\
+%     Year &Normal, In brackets\\
+%     \bottomrule
+%   \end{tabular}
+% \end{table}
+
+% Here are some examples~.
+% In addition, some Axiomatic Design references of interest can be found in~.  
+% \textbf{There was an error in the original template where URLs would format incorrectly.  
+% If this has been corrected, then  will format nicely.}
+% of note, the template example has a nonexistant reference #3
+% Deluca didn't produce a book on his own only as an editor as part of a series
+% --foley
+
+%
+% BibTeX or Biber users please use (the style is already called in the class, ensure that the "woc.bst" style is in your local directory)
+% \bibliography{name or your bibliography database}
+\bibliography{references}
+
+
+
+
+
+\end{document}
+
+% end of file template.tex
+%%%%%%%%%%%%%%%%%%%% TeXStudio Magic Comments %%%%%%%%%%%%%%%%%%%%%
+%% These comments that start with "!TeX" modify the way TeXStudio works
+%% For details see http://texstudio.sourceforge.net/manual/current/usermanual_en.html   Section 4.10
+%%
+%% What encoding is the file in?
+% !TeX encoding = UTF-8
+%% What language should it be spellchecked?
+% !TeX spellcheck = en_US
+%% What program should I compile this document with?
+% !TeX program = pdflatex
+%% Which program should be used for generating the bibliography?
+% !TeX TXS-program:bibliography = txs:///bibtex
+%% This also sets the bibliography program for TeXShop and TeXWorks
+% !BIB program = bibtex
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: t
+%%% End:
