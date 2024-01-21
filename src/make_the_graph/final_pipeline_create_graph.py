@@ -43,7 +43,7 @@ def read_first_n_lines(file_path, n=10000):
 file_path = 'data/arxiv-metadata-oai-snapshot.json'
 
 # DataFrame erstellen
-df = read_first_n_lines(file_path, 100000000000)
+df = read_first_n_lines(file_path, 10)
 
 # %%
 df.dtypes
@@ -96,18 +96,18 @@ def lemma(docs=df.abstract):
     ]
 
 
-import os
-if not os.path.exists("all_words.pt"):
-    all_words = lemma(df.abstract)
-    torch.save(all_words, "all_words.pt")
-else:
-    all_words = torch.load("all_words.pt")
+# import os
+# if not os.path.exists("all_words.pt"):
+all_words = lemma(df.abstract)
+    # torch.save(all_words, "all_words.pt")
+# else:
+    # all_words = torch.load("all_words.pt")
     
-if not os.path.exists("all_title_words.pt"):
-    all_title_words = lemma(df.title)
-    torch.save(all_title_words, "all_title_words.pt")
-else:
-    all_title_words = torch.load("all_title_words.pt")
+# if not os.path.exists("all_title_words.pt"):
+all_title_words = lemma(df.title)
+    # torch.save(all_title_words, "all_title_words.pt")
+# else:
+    # all_title_words = torch.load("all_title_words.pt")
     
 
 # %%
