@@ -1,0 +1,115 @@
+classes:
+  - class: Paper
+    description: Paper
+    properties:
+      - dataType:
+          - string
+        description: Paper title
+        name: title
+
+    vectorizer: none
+    # invertedIndexConfig:
+    #   indexNullState: True
+    #   indexTimestamps: True
+    vectorIndexConfig:
+      distance: l2-squared
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 0 # see above section for recommended values
+
+  - class: Author
+    description: Author
+    properties:
+      - dataType:
+          - string
+        description: Author name
+        name: name
+
+    vectorizer: none
+    # invertedIndexConfig:
+    #   indexNullState: True
+    #   indexTimestamps: True
+    vectorIndexConfig:
+      distance: l2-squared
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 0 # see above section for recommended values
+
+  - class: Abstract
+    description: Abstract
+    properties:
+      - dataType:
+          - string
+        description: Abstract text
+        name: abstract
+
+    vectorizer: none
+    # invertedIndexConfig:
+    #   indexNullState: True
+    #   indexTimestamps: True
+    vectorIndexConfig:
+      distance: l2-squared
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 0 # see above section for recommended values
+
+  - class: Category
+    description: Category
+    properties:
+      - dataType:
+          - string
+        description: Category
+        name: name
+        
+
+    vectorizer: none
+    # invertedIndexConfig:
+    #   indexNullState: True
+    #   indexTimestamps: True
+    vectorIndexConfig:
+      distance: l2-squared
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 0 # see above section for recommended values
+
+  - class: Word
+    description: Word
+    properties:
+      - dataType:
+          - string
+        description: Word
+        name: word
+
+    vectorizer: none
+    # invertedIndexConfig:
+    #   indexNullState: True
+    #   indexTimestamps: True
+    vectorIndexConfig:
+      distance: l2-squared
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 0 # see above section for recommended values
+
+  - class: Journal
+    description: Journal
+    properties:
+      - dataType:
+          - string
+        description: Journal
+        name: name
+
+    vectorizer: none
+    # invertedIndexConfig:
+    #   indexNullState: True
+    #   indexTimestamps: True
+    vectorIndexConfig:
+      distance: l2-squared
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 0 # see above section for recommended values

@@ -10,6 +10,7 @@ import re
 import json
 import numpy as np
 
+import os
 import spacy
 import nltk
 from nltk.corpus import stopwords
@@ -43,8 +44,7 @@ def read_first_n_lines(file_path, n=10000):
 file_path = 'data/arxiv-metadata-oai-snapshot.json'
 
 # DataFrame erstellen
-df = read_first_n_lines(file_path, 100000000000)
-
+df = read_first_n_lines(file_path, 10)
 # %%
 df.dtypes
 
@@ -89,25 +89,25 @@ df_short = df_short.reset_index(drop=True)
 # %%
 nlp = spacy.load("en_core_web_sm")
 def lemma(docs=df.abstract):
-    pip = nlp.pipe(docs, batch_size=32, n_process=-1, disable=["parser", "ner"])
+    pip = nlp.pipe(docs, batch_size=32, n_process=1, disable=["parser", "ner"])
     return [
         [tok.lemma_.lower() for tok in doc if not tok.is_punct and not tok.is_space]
         for doc in tqdm(pip, total=len(docs))
     ]
 
 
-import os
-if not os.path.exists("all_words.pt"):
-    all_words = lemma(df.abstract)
-    torch.save(all_words, "all_words.pt")
-else:
-    all_words = torch.load("all_words.pt")
+# import os
+# if not os.path.exists("all_words.pt"):
+all_words = lemma(df.abstract)
+    # torch.save(all_words, "all_words.pt")
+# else:
+    # all_words = torch.load("all_words.pt")
     
-if not os.path.exists("all_title_words.pt"):
-    all_title_words = lemma(df.title)
-    torch.save(all_title_words, "all_title_words.pt")
-else:
-    all_title_words = torch.load("all_title_words.pt")
+# if not os.path.exists("all_title_words.pt"):
+all_title_words = lemma(df.title)
+    # torch.save(all_title_words, "all_title_words.pt")
+# else:
+    # all_title_words = torch.load("all_title_words.pt")
     
 
 # %%
