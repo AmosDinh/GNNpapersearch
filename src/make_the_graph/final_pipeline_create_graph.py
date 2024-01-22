@@ -10,6 +10,7 @@ import re
 import json
 import numpy as np
 
+import os
 import spacy
 import nltk
 from nltk.corpus import stopwords
@@ -44,7 +45,6 @@ file_path = 'data/arxiv-metadata-oai-snapshot.json'
 
 # DataFrame erstellen
 df = read_first_n_lines(file_path, 10)
-
 # %%
 df.dtypes
 
@@ -89,7 +89,7 @@ df_short = df_short.reset_index(drop=True)
 # %%
 nlp = spacy.load("en_core_web_sm")
 def lemma(docs=df.abstract):
-    pip = nlp.pipe(docs, batch_size=32, n_process=-1, disable=["parser", "ner"])
+    pip = nlp.pipe(docs, batch_size=32, n_process=1, disable=["parser", "ner"])
     return [
         [tok.lemma_.lower() for tok in doc if not tok.is_punct and not tok.is_space]
         for doc in tqdm(pip, total=len(docs))
