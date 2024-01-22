@@ -13,10 +13,11 @@ classes:
     #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
+      vectorCacheMaxObjects: 1000000
       pq:
         enabled: True # Enable PQ
         trainingLimit: 100000
-        segments: 0 # see above section for recommended values
+        segments: 128 # see above section for recommended values
 
   - class: Author
     description: Author
@@ -32,10 +33,11 @@ classes:
     #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
+      vectorCacheMaxObjects: 1000000
       pq:
         enabled: True # Enable PQ
         trainingLimit: 100000
-        segments: 0 # see above section for recommended values
+        segments: 128 # see above section for recommended values
 
   - class: Abstract
     description: Abstract
@@ -51,10 +53,11 @@ classes:
     #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
+      vectorCacheMaxObjects: 1000000
       pq:
         enabled: True # Enable PQ
         trainingLimit: 100000
-        segments: 0 # see above section for recommended values
+        segments: 128 # see above section for recommended values
 
   - class: Category
     description: Category
@@ -71,10 +74,11 @@ classes:
     #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
+      vectorCacheMaxObjects: 1000000
       pq:
         enabled: True # Enable PQ
         trainingLimit: 100000
-        segments: 0 # see above section for recommended values
+        segments: 128 # see above section for recommended values
 
   - class: Word
     description: Word
@@ -90,10 +94,11 @@ classes:
     #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
+      vectorCacheMaxObjects: 1000000
       pq:
         enabled: True # Enable PQ
         trainingLimit: 100000
-        segments: 0 # see above section for recommended values
+        segments: 128 # see above section for recommended values
 
   - class: Journal
     description: Journal
@@ -109,7 +114,8 @@ classes:
     #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
+      vectorCacheMaxObjects: 1000000
       pq:
         enabled: True # Enable PQ
         trainingLimit: 100000
-        segments: 0 # see above section for recommended values
+        segments: 128 # see above section for recommended values
