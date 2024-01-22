@@ -80,6 +80,8 @@ df.head()
 # ### Define size of dataset
 
 # %%
+# delete duplicates
+
 df_short = df.drop_duplicates(subset='title', keep='first')
 df_short = df_short.reset_index(drop=True)
 
@@ -87,6 +89,8 @@ df_short = df_short.reset_index(drop=True)
 # ### Lemmatization
 
 # %%
+# use lemmatization to get the root of each word of the abstract and title
+
 nlp = spacy.load("en_core_web_sm")
 def lemma(docs=df.abstract):
     pip = nlp.pipe(docs, batch_size=32, n_process=1, disable=["parser", "ner"])
@@ -111,13 +115,13 @@ all_title_words = lemma(df.title)
     
 
 # %%
-# create lists that contain lemmatized words from abstracts, titles, and lists of authors and categories for each entry in the DataFrame
+# create lists that contain all entries of authors and categories
 
 all_authors, all_categories= [], []
 
 for index, row in df_short.iterrows():
-    text = row['abstract']
-    title = row['title']
+    # text = row['abstract']
+    # title = row['title']
     author = row['authors_parsed']
     category = row['categories'] 
     all_authors.append(author)
@@ -130,12 +134,12 @@ for index, row in df_short.iterrows():
 # ### Delete Stopwords
 
 # %%
+# delete stopwords in abstract and title
+
 nltk.download('stopwords')
 
-# Laden der Stoppwörter
 stop_words = set(stopwords.words('english'))
 
-# Entfernen der Stoppwörter aus jedem Dokument
 filtered_all_words = []
 for words in all_words:
     filtered_words = [word for word in words if word not in stop_words]
@@ -150,7 +154,7 @@ for words in all_title_words:
 # ### List with every word
 
 # %%
-# create lists with every value without double lists
+# create lists with every value 
 # if not os.path.exists("hetero_graph_temp.pt"):
 
 words_values = [word for sublist in filtered_all_words for word in sublist]
@@ -167,6 +171,9 @@ title_values = [title for sublist in all_title_words for title in sublist]
 # ### Delete duplicates
 
 # %%
+# use orderedset to get unique values while preserving order
+# https://www.geeksforgeeks.org/python-ordered-set/
+
 categories_list = OrderedSet(categories_values)
 authors_list = OrderedSet(authors_values)
 title_words_list = OrderedSet(title_values)
@@ -185,7 +192,6 @@ if not os.path.exists("hetero_graph_temp.pt"):
     comment_list = df_short['comments'].tolist()
 
     journal_list = df_short['journal-ref'].tolist()
-    # journal_list_set = set(journal_list)
 
     words_in_title_list = df_short['title'].tolist()
 
@@ -199,6 +205,9 @@ if not os.path.exists("hetero_graph_temp.pt"):
     # ## Create Hetero Object
 
     # %%
+    # https://pytorch-geometric.readthedocs.io/en/latest/generated/torch_geometric.data.HeteroData.html
+    # create the graph using heterodata from pytorch geometric
+    
     data = HeteroData()
     # data['paper'].num_nodes = len(df_short)
     data['paper'].license = licenses_list
@@ -240,23 +249,29 @@ unique_titles = df_short['title'].unique()
 id_to_paper = {i:title for i, title in enumerate(unique_titles)}
 
 if not os.path.exists("hetero_graph_temp3.pkl"):
+    # create dicts to map title to id and id to title
     title_to_id = {title:i for i, title in enumerate(unique_titles)}
     idtitle = df_short['title'].apply(lambda x: title_to_id[x])
 
-
+    # create dicts to map author to id and id to author
     author_to_id = {author:i for i, author in enumerate(authors_list)}
     id_to_author = {i:author for i, author in enumerate(authors_list)}
-
+    
+    # create list of names and authors for each paper and add data to graph
     data['paper'].name = [id_to_paper[i] for i in range(len(id_to_paper))]
     data['paper'].num_nodes = len(data['paper'].name)
     data['author'].name = [id_to_author[i] for i in range(len(id_to_author))]
     data['author'].num_nodes = len(data['author'].name)
     print('paper author')
+
+    # list of lists with authors for each paper
     authors_in_paper = [[author_to_id[author] for author in authors] for authors in all_authors]
 
+    # create edge by using two lists of same length, mapping the paper id to the author id
     edge1 = [[paper_id, author_id] for paper_id, author_list in zip(idtitle, authors_in_paper) for author_id in author_list]
     edge1 = torch.tensor(edge1).T
 
+    # add edge to graph
     data['paper', 'written_by', 'author'].edge_index = edge1
 
     # edge paper has category
