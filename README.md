@@ -5,7 +5,7 @@
 ## Running data preprocessing, training and embedding generation.
 - src/make_the_graph/data/ contains only 1000 rows of the 3 million row .json. The original link to download the whole dataset can be found in src/make_the_graph/dataset
 
-Requirements for the python kernel can be installed manually py copying the commands out of requirements.ipynb or running the requirements.ipynb with the correct kernel attached.
+Requirements for the python kernel can be installed manually by copying the commands out of requirements.ipynb or running the requirements.ipynb with the correct kernel attached.
 Python file and notebooks can be run sequentially in order 0_, 1__, 1_ .. 6_.
 The output will be the gnn embeddings named embeddings_{node_type}.pt,
 relationship embeddings relationship_embedding_{rel_type}.pt
