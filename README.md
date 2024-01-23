@@ -3,7 +3,7 @@
 
 
 ## Running data preprocessing, training and embedding generation.
-- src/make_the_graph/data/ contains only 1000 rows of the 3 million row .json. The original link to download the whole dataset can be found in src/make_the_graph/dataset
+- src/make_the_graph/data/ contains only 1000 rows of the 3 million row .json. The original link to download the whole dataset can be found in src/make_the_graph/dataset.
 
 Requirements for the python kernel can be installed manually by copying the commands out of requirements.ipynb or running the requirements.ipynb with the correct kernel attached.
 Python file and notebooks can be run sequentially in order 0_, 1__, 1_ .. 6_.
@@ -13,7 +13,7 @@ and the tfidf embeddings named tfidf_embeddings.pkl.
 These pickle files together with the arxiv_author_paper_graph_no_features_bare.pkl which is also produced through the notebooks are then loaded into the weaviate database.
 
 Note: 
-- The GNN will only run for one minibatch for demonstration purposes, the break statement must be commented out for longer training
+- The GNN will only run for one minibatch for demonstration purposes, the break statement must be commented out for longer training.
 - 1_serializer.ipynb was used to split up the dataset to train on a machine where the whole pickle could not be loaded at once. It is not necessary for the demonstration.
 
 
