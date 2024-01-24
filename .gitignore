@@ -1,2 +1,5 @@
 *.json
 .venv
+*.pkl
+*.pt
+*.zip
