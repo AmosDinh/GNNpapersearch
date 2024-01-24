@@ -1,0 +1,17 @@
+classes:
+  - class: Paper
+    description: Paper
+    properties:
+      - dataType:
+          - string
+        description: Paper title
+        name: title
+
+    vectorizer: none
+    vectorIndexConfig:
+      distance: cosine
+      vectorCacheMaxObjects: 1000000
+      pq:
+        enabled: True # Enable PQ
+        trainingLimit: 100000
+        segments: 128  
