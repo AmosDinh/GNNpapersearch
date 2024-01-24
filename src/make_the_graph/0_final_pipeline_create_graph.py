@@ -41,7 +41,7 @@ def read_first_n_lines(file_path, n=10000):
                 continue
     return pd.DataFrame(data)
 
-file_path = 'data/arxiv-metadata-oai-snapshot2.json'
+file_path = 'data/arxiv-metadata-oai-snapshot.json'
 
 # DataFrame erstellen
 df = read_first_n_lines(file_path, 1000)
