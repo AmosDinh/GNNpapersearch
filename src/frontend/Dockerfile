@@ -3,6 +3,7 @@ FROM python:3.9
 WORKDIR /frontend
 
 COPY requirements.txt ./
+COPY relation_embeddings ./
 # RUN pip install -U pip
 # RUN apt-get update && apt-get install -y
 # RUN pip install -r requirements.txt

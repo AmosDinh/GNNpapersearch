@@ -14,8 +14,8 @@ def generate_uuid(class_name: str, node_id: str) -> str:
     return generate_uuid5((node_id, class_name))
 
 
-# def get_weaviate_client(db_url: str = "http://Weaviate:8080") -> Client:
-def get_weaviate_client(db_url: str = "http://localhost:8081") -> Client:
+def get_weaviate_client(db_url: str = "http://Weaviate:8080") -> Client:
+# def get_weaviate_client(db_url: str = "http://localhost:8081") -> Client:
     return Client(db_url)
 
 
@@ -35,7 +35,7 @@ DATA_OB_DICT = {
     "Paper": "name",
     "Author": "name",
     "Category": "name",
-    "Word": "word",
+    "Word": "name",
     "Journal": "name",
 }
 
@@ -65,7 +65,7 @@ def get_near_vector(vector: list, node_type: str, property: str):
     return response["data"]["Get"][node_type.capitalize()]
 
 
-@st.cache_data
+# @st.cache_data
 def process_text(text, option1):
     try:
         # This is where you would put your text processing.
@@ -86,22 +86,22 @@ def prepare_vector(vector: dict, option1: str, option2: str):
     if option1 != option2:
         if option2 == "Paper":
             relationship_vector = torch.load(
-                f"../../db/relation_embeddings/{option2.lower()}_{option1.lower()}.pt"
+                f"relation_embeddings/{option2.lower()}_{option1.lower()}.pt"
             )
             vector = vector - relationship_vector["embedding"]
         elif option1 == "Paper":
             relationship_vector = torch.load(
-                f"../../db/relation_embeddings/{option1.lower()}_{option2.lower()}.pt"
+                f"relation_embeddings/{option1.lower()}_{option2.lower()}.pt"
             )
             vector = vector + relationship_vector["embedding"]
         else:
             relationship_vector = torch.load(
-                f"../../db/relation_embeddings/paper_{option1.lower()}.pt"
+                f"relation_embeddings/paper_{option1.lower()}.pt"
             )
             vector = vector - relationship_vector["embedding"]
 
             relationship_vector = torch.load(
-                f"../../db/relation_embeddings/paper_{option2.lower()}.pt"
+                f"relation_embeddings/paper_{option2.lower()}.pt"
             )
             vector = vector + relationship_vector["embedding"]
     property = DATA_OB_DICT[option2]
