@@ -1,3 +1,4 @@
-streamlit
-pandas
-json
+streamlit==1.30.0
+pandas==2.2.0
+weaviate-client==3.26.2
+torch==2.1.2

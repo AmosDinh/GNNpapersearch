@@ -5,7 +5,23 @@ classes:
       - dataType:
           - string
         description: Paper title
-        name: title
+        name: name
+      - dataType:
+          - string
+        description: License
+        name: license
+      - dataType:
+          - string
+        description: DOI
+        name: doi
+      - dataType:
+          - string
+        description: Number of Pages
+        name: pages
+      - dataType:
+          - string
+        description: Journal
+        name: journal
 
     vectorizer: none
     # invertedIndexConfig:
@@ -28,29 +44,6 @@ classes:
         name: name
 
     vectorizer: none
-    # invertedIndexConfig:
-    #   indexNullState: True
-    #   indexTimestamps: True
-    vectorIndexConfig:
-      distance: l2-squared
-      vectorCacheMaxObjects: 1000000
-      pq:
-        enabled: True # Enable PQ
-        trainingLimit: 100000
-        segments: 128 # see above section for recommended values
-
-  - class: Abstract
-    description: Abstract
-    properties:
-      - dataType:
-          - string
-        description: Abstract text
-        name: abstract
-
-    vectorizer: none
-    # invertedIndexConfig:
-    #   indexNullState: True
-    #   indexTimestamps: True
     vectorIndexConfig:
       distance: l2-squared
       vectorCacheMaxObjects: 1000000
@@ -66,7 +59,6 @@ classes:
           - string
         description: Category
         name: name
-        
 
     vectorizer: none
     # invertedIndexConfig:
@@ -86,7 +78,7 @@ classes:
       - dataType:
           - string
         description: Word
-        name: word
+        name: name
 
     vectorizer: none
     # invertedIndexConfig:

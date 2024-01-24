@@ -1,6 +1,7 @@
 version: '3.4'
 services:
   weaviate:
+    container_name: Weaviate
     image: semitechnologies/weaviate:latest
     volumes:
       - /var/weaviatecomplete:/var/lib/weaviate
@@ -15,19 +16,38 @@ services:
       DEFAULT_VECTORIZER_MODULE: 'none'
       LOG_LEVEL: 'debug'
       CLUSTER_HOSTNAME: 'node1'
-    # networks:
-    #   - data-network
+    networks:
+      - data-network
+
+  tf-idf:
+    container_name: TF-IDF
+    image: semitechnologies/weaviate:latest
+    volumes:
+      - /var/tf-idf:/var/lib/weaviate
+    ports:
+    - 8080:8080
+    - 50050:50051
+    restart: on-failure:0
+    environment:
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
+      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
+      DEFAULT_VECTORIZER_MODULE: 'none'
+      LOG_LEVEL: 'debug'
+      CLUSTER_HOSTNAME: 'node2'
+    networks:
+      - data-network
   
   frontend:
     build: ./src/frontend
     ports:
       - 80:8501
     container_name: Frontend
-    # networks:
-    #   - data-network
+    networks:
+      - data-network
     volumes:
       - ./src/frontend/:/frontend/
 
-# networks: 
-#   data-network:
-#     driver: bridge
+networks: 
+  data-network:
+    driver: bridge
