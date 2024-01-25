@@ -18,25 +18,6 @@ services:
       CLUSTER_HOSTNAME: 'node1'
     networks:
       - data-network
-
-  tf-idf:
-    container_name: TF-IDF
-    image: semitechnologies/weaviate:latest
-    volumes:
-      - /var/tf-idf:/var/lib/weaviate
-    ports:
-    - 8080:8080
-    - 50050:50051
-    restart: on-failure:0
-    environment:
-      QUERY_DEFAULTS_LIMIT: 25
-      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: 'true'
-      PERSISTENCE_DATA_PATH: '/var/lib/weaviate'
-      DEFAULT_VECTORIZER_MODULE: 'none'
-      LOG_LEVEL: 'debug'
-      CLUSTER_HOSTNAME: 'node2'
-    networks:
-      - data-network
   
   frontend:
     build: ./src/frontend
