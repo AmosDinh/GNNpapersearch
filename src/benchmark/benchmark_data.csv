@@ -1,0 +1,20 @@
+search_doi,search_title,result_doi,result_title
+arXiv:2003.01332,Heterogeneous Graph Transformer,arXiv:1703.06103,Modeling Relational Data with Graph Convolutional Networks
+arXiv:2003.01332,Heterogeneous Graph Transformer,arXiv:1710.10903,Graph Attention Networks
+arXiv:2003.01332,Heterogeneous Graph Transformer,arXiv:1904.05811,Relational Graph Attention Networks
+arXiv:1902.10197,RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space,arXiv:1412.6575,Embedding Entities and Relations for Learning and Inference in Knowledge Bases
+arXiv:1902.10197,RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space,arXiv:1606.06357,Complex Embeddings for Simple Link Prediction
+arXiv:1902.10197,RotatE: Knowledge Graph Embedding by Relational Rotation in Complex Space,arXiv:2107.07842,A Survey of Knowledge Graph Embedding and Their Applications
+arXiv:2306.11264,GraphGLOW: Universal and Generalizable Structure Learning for Graph Neural Networks,arXiv:2310.05174,GSLB: The Graph Structure Learning Benchmark
+arXiv:2306.11264,GraphGLOW: Universal and Generalizable Structure Learning for Graph Neural Networks,arXiv:2105.09111,Self-supervised Heterogeneous Graph Neural Network with Co-contrastive Learning
+arXiv:2306.11264,GraphGLOW: Universal and Generalizable Structure Learning for Graph Neural Networks,arXiv:1801.07829,Dynamic Graph CNN for Learning on Point Clouds
+arXiv:2011.08843,Design Space for Graph Neural Networks,arXiv:2203.00112,GraphWorld: Fake Graphs Bring Real Insights for GNNs
+arXiv:1609.02907,Semi-Supervised Classification with Graph Convolutional Networks,arXiv:1809.09401,Hypergraph Neural Networks
+arXiv:1801.07606,Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning,arXiv:2008.09864,Tackling Over-Smoothing for General Graph Convolutional Networks
+arXiv:1801.07606,Deeper Insights into Graph Convolutional Networks for Semi-Supervised Learning,arXiv:2002.05287,Geom-GCN: Geometric Graph Convolutional Networks
+arXiv:1810.00826,How Powerful are Graph Neural Networks?,arXiv:1810.02244,Weisfeiler and Leman Go Neural: Higher-order Graph Neural Networks
+arXiv:1709.05254,Detection of Anomalies in Large Scale Accounting Data using Deep Autoencoder Networks,arXiv:1908.00734,Detection of Accounting Anomalies in the Latent Space using Adversarial Autoencoder Neural Networks
+arXiv:1709.05254,Detection of Anomalies in Large Scale Accounting Data using Deep Autoencoder Networks,arXiv:2210.14056,Unsupervised Anomaly Detection for Auditing Data and Impact of Categorical Encodings
+arXiv:1803.01092,Analyzing Business Process Anomalies Using Autoencoders,arXiv:1908.00734,Detection of Accounting Anomalies in the Latent Space using Adversarial Autoencoder Neural Networks
+arXiv:2203.16060,Understanding Graph Convolutional Networks for Text Classification,arXiv:1809.05679,Graph Convolutional Networks for Text Classification
+
