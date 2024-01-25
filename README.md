@@ -29,3 +29,6 @@ python fill_db.py
 ```
 
 The Frontend can be acceced via browser with this link [http://localhost](http://localhost)
+
+## Benchmark
+Benchmark files can be found in src/benchmark
