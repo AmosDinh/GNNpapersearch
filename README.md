@@ -16,4 +16,16 @@ Note:
 - The GNN will only run for one minibatch for demonstration purposes, the break statement must be commented out for longer training.
 - 1_serializer.ipynb was used to split up the dataset to train on a machine where the whole pickle could not be loaded at once. It is not necessary for the demonstration.
 
+## Database and Frontend
+Start the database and Frontendserver with the command:
+```
+docker-compose up -d 
+```
 
+To fill the database go to
+```
+cd src/db
+python fill_db.py
+```
+
+The Frontend can be acceced via browser with this link [http://localhost](http://localhost)
