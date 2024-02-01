@@ -1,13 +1,20 @@
 # GNNpapersearch
-Four university student project.
-We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 7 million entities, including 2 million papers and 1 million authors.
-We use the GNN to obtain numerical representations of papers, authors, categories, journals and words and power search using the Weaviate Database.
+Four university student project. <br>
+Wetrain a Graph Neural Network on the ArXiv paper dataset which comprises roughly 2 million papers and 1 million authors.
+The GNN is used to obtain numerical representations of papers, authors, categories, journals and words and power search using the Weaviate Database. 
+The training approach allows us to compare every entity type with every other one. For example we can find similar papers given a query of an author, a journal or a category.
 
-Training is done with the Heterogeneous Graph Transformer, corresponding sampling approach and a TransE Knowledge Graph Embedding Head with margin loss.
-The training takes 36 hours on a P100 Nvidia GPU. 
+The graph is constructed using all entity- and relationship types. As [Yao, L., Mao, C., & Luo, Y. (2019, July)] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in.  
 
-We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and then compute the mean rank of the item we want to be ranked highly.
-Comparing against PCA-reduced TF-IDF, 
+Training is done with the Heterogeneous Graph Transformer, corresponding sampling approach and a TransE Knowledge Graph Embedding Head with margin loss:
+![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/4efa8e29-4b70-4784-b014-f3c44fc25f9a)
+where s, e, t are the sourcenode, relationship and targetnode embeddings of all relationship types in the graph e.g (paper written_by author). 
+The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
+
+We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain).
+Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90k out of 2,3 million compared to 190k (TF-IDF). 
+
+
 
 
 
