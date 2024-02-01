@@ -9,14 +9,18 @@
 The graph is constructed using all entity- and relationship types. As [1] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in. The graph comprises 7 million nodes and more than 200 million edges.
 
 Training is done with the Heterogeneous Graph Transformer [2], and the sampling approach they propose, as well as a TransE Knowledge Graph Embedding head [3] with margin loss:
-![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/cfc058f1-5af4-487d-9b1b-ef99efe95059)
-
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/4efa8e29-4b70-4784-b014-f3c44fc25f9a)
-![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/959dac26-8bf8-4679-ad4e-4313ea293683)
+
+
 
 where s, e, t are the sourcenodes, relationships and targetnodes of all relationship types in the graph e.g (paper written_by author). S' contains the triplets where either the source or target is corrupted.  <br>
 
+
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
+![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/cfc058f1-5af4-487d-9b1b-ef99efe95059)
+![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/959dac26-8bf8-4679-ad4e-4313ea293683)
+
+
 
 ### Results
 - We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain).
