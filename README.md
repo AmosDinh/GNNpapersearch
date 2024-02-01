@@ -8,7 +8,7 @@
 ### Training
 The graph is constructed using all entity- and relationship types. As [1] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in.   
 
-Training is done with the Heterogeneous Graph Transformer [2], corresponding sampling approach and a TransE Knowledge Graph Embedding [3] head with margin loss:
+Training is done with the Heterogeneous Graph Transformer [2], corresponding sampling approach and a TransE Knowledge Graph Embedding head [3] with margin loss:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/4efa8e29-4b70-4784-b014-f3c44fc25f9a)
 where s, e, t are the sourcenodes, relationships and targetnodes of all relationship types in the graph e.g (paper written_by author).  <br>
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
