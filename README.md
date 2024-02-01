@@ -1,4 +1,4 @@
-# GNNpapersearch
+# Application of Graph Neural Networks to Semantic Search
 
 ### Summary
 1. We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 2 million papers and 1 million authors. 
