@@ -12,7 +12,7 @@ where s, e, t are the sourcenodes, relationships and targetnodes of all relation
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
 
 We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain).
-Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90k out of 2,3 million compared to 190k (TF-IDF). 
+Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90e3 out of 2.3e6 compared to 190e3 out of 2.3e6. 
 
 
 
