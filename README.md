@@ -11,6 +11,7 @@ The graph is constructed using all entity- and relationship types. As [1] propos
 Training is done with the Heterogeneous Graph Transformer [2], and the sampling approach they propose, as well as a TransE Knowledge Graph Embedding head [3] with margin loss:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/4efa8e29-4b70-4784-b014-f3c44fc25f9a)
 where s, e, t are the sourcenodes, relationships and targetnodes of all relationship types in the graph e.g (paper written_by author). S' contains the triplets where either the source or target is corrupted.  <br>
+
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
 
 ### Results
