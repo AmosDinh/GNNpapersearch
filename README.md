@@ -1,7 +1,7 @@
 # GNNpapersearch
 
 We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 2 million papers and 1 million authors. <br>
-The GNN is used to obtain numerical representations of papers, authors, categories, journals and words and power search using the Weaviate Database. <br> 
+The GNN is used to obtain numerical representations of papers, authors, categories, journals and words. Search is powerered using the Weaviate vector database. <br> 
 The training approach allows us to compare every entity type with every other one. For example we can find similar papers given a query of an author, a journal or a category. <br>
 
 The graph is constructed using all entity- and relationship types. As [Yao, L., Mao, C., & Luo, Y. (2019, July)] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in.   
