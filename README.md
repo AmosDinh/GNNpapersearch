@@ -18,8 +18,12 @@ where s, e, t are the sourcenodes, relationships and targetnodes of all relation
 
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
 
-Schematic view:
+Margin loss idea:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/cfc058f1-5af4-487d-9b1b-ef99efe95059)
+
+TransE idea:
+![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/e1778648-b250-41ff-a857-906315693d81)
+
 
 The whole system:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/c01dae1f-09ff-497b-a03c-3cf800ef0cb0)
