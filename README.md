@@ -1,4 +1,13 @@
 # GNNpapersearch
+Four university student project.
+We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 7 million entities, including 2 million papers and 1 million authors.
+We use the GNN to obtain numerical representations of papers, authors, categories, journals and words and power search using the Weaviate Database.
+
+Training is done with the Heterogeneous Graph Transformer, corresponding sampling approach and a TransE Knowledge Graph Embedding Head with margin loss.
+The training takes 36 hours on a P100 Nvidia GPU. 
+
+We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and then compute the mean rank of the item we want to be ranked highly.
+Comparing against PCA-reduced TF-IDF, 
 
 
 
