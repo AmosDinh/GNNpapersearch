@@ -16,10 +16,14 @@ The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN
 ### Results
 We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain). <br>
 Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90,000 out of 2.3 million compared to 190,000 out of 2.3 million (TF-IDF approach). 
+With the project we further show the feasability of performing fast nearest neighbor search for 7 million embeddings on consumer grade hardware (32GB RAM) with the help of Weaviates built-in PQ-quantization [4].
 
+
+### Sources
 [1] Yao, L., Mao, C., & Luo, Y. (2019, July). Graph convolutional networks for text classification. In Proceedings of the AAAI conference on artificial intelligence (Vol. 33, No. 01, pp. 7370-7377). <br>
 [2] Hu, Z., Dong, Y., Wang, K., & Sun, Y. (2020, April). Heterogeneous graph transformer. In Proceedings of the web conference 2020 (pp. 2704-2710). <br>
 [3] Bordes, A., Usunier, N., Garcia-Duran, A., Weston, J., & Yakhnenko, O. (2013). Translating embeddings for modeling multi-relational data. Advances in neural information processing systems, 26. <br>
+[4] https://weaviate.io/blog/ann-algorithms-hnsw-pq#hnswpq
 
 
 
