@@ -1,12 +1,12 @@
 # GNNpapersearch
 
-We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 2 million papers and 1 million authors. <br>
-The GNN is used to obtain numerical representations of papers, authors, categories, journals and words. Search is powerered using the Weaviate vector database. <br> 
-The training approach allows us to compare every entity type with every other one. For example we can find similar papers given a query of an author, a journal or a category. <br>
+1. We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 2 million papers and 1 million authors. 
+2. The GNN is used to obtain numerical representations of papers, authors, categories, journals and words. Search is powerered using the Weaviate vector database. 
+.3 The training approach allows us to compare every entity type with every other one. For example we can find similar papers given a query of an author, a journal or a category.
 
-The graph is constructed using all entity- and relationship types. As [Yao, L., Mao, C., & Luo, Y. (2019, July)] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in.   
+The graph is constructed using all entity- and relationship types. As [1] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in.   
 
-Training is done with the Heterogeneous Graph Transformer, corresponding sampling approach and a TransE Knowledge Graph Embedding Head with margin loss:
+Training is done with the Heterogeneous Graph Transformer [2], corresponding sampling approach and a TransE Knowledge Graph Embedding [3] head with margin loss:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/4efa8e29-4b70-4784-b014-f3c44fc25f9a)
 where s, e, t are the sourcenodes, relationships and targetnodes of all relationship types in the graph e.g (paper written_by author).  <br>
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
@@ -14,6 +14,9 @@ The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN
 We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain). <br>
 Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90e3 out of 2.3e6 compared to 190e3 out of 2.3e6. 
 
+[1] Yao, L., Mao, C., & Luo, Y. (2019, July). Graph convolutional networks for text classification. In Proceedings of the AAAI conference on artificial intelligence (Vol. 33, No. 01, pp. 7370-7377). <br>
+[2] Hu, Z., Dong, Y., Wang, K., & Sun, Y. (2020, April). Heterogeneous graph transformer. In Proceedings of the web conference 2020 (pp. 2704-2710). <br>
+[3] Bordes, A., Usunier, N., Garcia-Duran, A., Weston, J., & Yakhnenko, O. (2013). Translating embeddings for modeling multi-relational data. Advances in neural information processing systems, 26. <br>
 
 
 
