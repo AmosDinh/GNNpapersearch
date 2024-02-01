@@ -8,7 +8,7 @@ The graph is constructed using all entity- and relationship types. As [Yao, L., 
 
 Training is done with the Heterogeneous Graph Transformer, corresponding sampling approach and a TransE Knowledge Graph Embedding Head with margin loss:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/4efa8e29-4b70-4784-b014-f3c44fc25f9a)
-where s, e, t are the sourcenode, relationship and targetnode embeddings of all relationship types in the graph e.g (paper written_by author). 
+where s, e, t are the sourcenodes, relationships and targetnodes of all relationship types in the graph e.g (paper written_by author). 
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
 
 We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain).
