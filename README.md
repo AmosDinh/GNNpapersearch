@@ -1,9 +1,11 @@
 # GNNpapersearch
 
+### Summary
 1. We train a Graph Neural Network on the ArXiv paper dataset which comprises roughly 2 million papers and 1 million authors. 
 2. The GNN is used to obtain numerical representations of papers, authors, categories, journals and words. Search is powerered using the Weaviate vector database. 
 3. The training approach allows us to compare every entity type with every other one. For example we can find similar papers given a query of an author, a journal or a category.
 
+### Training
 The graph is constructed using all entity- and relationship types. As [1] propose,  we create a node for every word and connect them by TF-IDF and PMI-weighted edges to the papers' abstracts they appear in.   
 
 Training is done with the Heterogeneous Graph Transformer [2], corresponding sampling approach and a TransE Knowledge Graph Embedding [3] head with margin loss:
@@ -11,6 +13,7 @@ Training is done with the Heterogeneous Graph Transformer [2], corresponding sam
 where s, e, t are the sourcenodes, relationships and targetnodes of all relationship types in the graph e.g (paper written_by author).  <br>
 The training takes 36 hours on a P100 Nvidia GPU. At the end of training the GNN still has only seen 1 million target edges (but more than a billion nodes).
 
+### Results
 We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain). <br>
 Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90,000 out of 2.3 million compared to 190,000 out of 2.3 million (TF-IDF approach). 
 
