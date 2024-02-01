@@ -22,7 +22,8 @@ Schematic view:
 ![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/cfc058f1-5af4-487d-9b1b-ef99efe95059)
 
 The whole system:
-![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/959dac26-8bf8-4679-ad4e-4313ea293683)
+![image](https://github.com/AmosDinh/GNNpapersearch/assets/39965380/c01dae1f-09ff-497b-a03c-3cf800ef0cb0)
+
 
 
 
