@@ -34,7 +34,7 @@ The whole system:
 ### Results
 - We create our own qualitative benchmark by specifying a query paper and the result we want to obtain and get the rank of the item we want to be ranked highly (only technical/ml domain).
 - Comparing against PCA-reduced TF-IDF, the approach achieves a mean rank of 90,000 out of 2.3 million compared to 190,000 out of 2.3 million (TF-IDF approach). 
-- With the project we further show the feasability of performing fast nearest neighbor search for 7 million embeddings on consumer grade hardware (32GB RAM) with the help of Weaviates built-in PQ-quantization [4].
+- With the project we further show the feasibility of performing fast nearest neighbor search for 7 million embeddings on consumer grade hardware (32GB RAM) with the help of Weaviates built-in PQ-quantization [4].
 
 
 ### Sources
